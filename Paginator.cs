@@ -80,7 +80,6 @@ namespace CorePagination
 
     }
 
-
     public static class PaginationExtensions
     {
         public static async Task<PaginationResult<T>> PaginateAsync<T>(
@@ -93,7 +92,7 @@ namespace CorePagination
             return await paginator.PaginateAsync(query, page, pageSize,calculateTotal);
         }
 
-        public static IQueryable<T> ApplyPagination<T>(
+        public static IQueryable<T> PreparePagination<T>(
             this IQueryable<T> query,
             int page,
             int pageSize) where T : class
@@ -114,7 +113,6 @@ namespace CorePagination
             return await paginatorWithUrls.PaginateAsync(query, page, pageSize, calculateTotal);
         }
     }
-
 
     public class PaginationResult<T>
     {
