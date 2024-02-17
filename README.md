@@ -36,7 +36,7 @@ To use pagination that includes URLs for page navigation, you can use `Paginator
 
 ```csharp
 var baseUrl = "http://myapi.com/entities";
-var paginatedResultWithUrls = await myDbContext.Entities.PaginateUrlsAsync(page, pageSize, baseUrl);
+var paginatedResultWithUrls = await dbContext.Entities.PaginateUrlsAsync(page, pageSize, baseUrl);
 ```
 
 ## Customization
