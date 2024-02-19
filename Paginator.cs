@@ -1,16 +1,11 @@
-using System.Collections.Generic;
-using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
-using System.Linq;
-using System;
-using Ardalis.GuardClauses;
 
 namespace CorePagination
 {
     public interface IPaginator<T>
     {
         Task<PaginationResult<T>> PaginateAsync(
-            IQueryable<T> query, 
+            IQueryable<T> query,
             int page,
             int pageSize,
             bool calculateTotal = true
@@ -21,9 +16,9 @@ namespace CorePagination
     {
         public async Task<PaginationResult<T>> PaginateAsync(IQueryable<T> query, int page, int pageSize, bool calculateTotal = true)
         {
-            Guard.Against.Null(query, nameof(query));
-            Guard.Against.NegativeOrZero(page, nameof(page));
-            Guard.Against.NegativeOrZero(pageSize, nameof(pageSize));
+            Guard.NotNull(query, nameof(query));
+            Guard.NotNegative(page, nameof(page));
+            Guard.NotNegative(pageSize, nameof(pageSize));
 
             var result = new PaginationResult<T>
             {
@@ -50,15 +45,15 @@ namespace CorePagination
 
         public PaginatorWithUrls(string baseUrl)
         {
-            Guard.Against.NullOrWhiteSpace(baseUrl, nameof(baseUrl));
+            Guard.NotNullOrWhiteSpace(baseUrl, nameof(baseUrl));
             _baseUrl = baseUrl;
         }
 
-        public new async Task<PaginationResultWithUrls<T>> PaginateAsync(IQueryable<T> query, int page, int pageSize,bool calculateTotal=true)
+        public new async Task<PaginationResultWithUrls<T>> PaginateAsync(IQueryable<T> query, int page, int pageSize, bool calculateTotal = true)
         {
-            Guard.Against.Null(query, nameof(query));
-            Guard.Against.NegativeOrZero(page, nameof(page));
-            Guard.Against.NegativeOrZero(pageSize, nameof(pageSize));
+            Guard.NotNull(query, nameof(query));
+            Guard.NotNegative(page, nameof(page));
+            Guard.NotNegative(pageSize, nameof(pageSize));
 
             var baseResult = await base.PaginateAsync(query, page, pageSize, calculateTotal);
 
@@ -85,11 +80,11 @@ namespace CorePagination
         public static async Task<PaginationResult<T>> PaginateAsync<T>(
             this IQueryable<T> query,
             int page,
-            int pageSize, 
+            int pageSize,
             bool calculateTotal = true) where T : class
         {
             var paginator = new Paginator<T>();
-            return await paginator.PaginateAsync(query, page, pageSize,calculateTotal);
+            return await paginator.PaginateAsync(query, page, pageSize, calculateTotal);
         }
 
         public static IQueryable<T> PreparePagination<T>(
@@ -107,7 +102,7 @@ namespace CorePagination
            this IQueryable<T> query,
            int page,
            int pageSize,
-           string baseUrl,bool calculateTotal) where T : class
+           string baseUrl, bool calculateTotal) where T : class
         {
             var paginatorWithUrls = new PaginatorWithUrls<T>(baseUrl);
             return await paginatorWithUrls.PaginateAsync(query, page, pageSize, calculateTotal);
@@ -132,6 +127,34 @@ namespace CorePagination
         public string PreviousPageUrl { get; set; }
         public string FirstPageUrl { get; set; }
         public string LastPageUrl { get; set; }
+    }
+
+
+    public static class Guard
+    {
+        public static void NotNull<T>(T argument, string paramName) where T : class
+        {
+            if (argument == null)
+            {
+                throw new ArgumentNullException(paramName, "Argument cannot be null.");
+            }
+        }
+
+        public static void NotNegative(int value, string paramName)
+        {
+            if (value < 0)
+            {
+                throw new ArgumentOutOfRangeException(paramName, "Argument cannot be negative.");
+            }
+        }
+
+        public static void NotNullOrWhiteSpace(string argument, string paramName)
+        {
+            if (string.IsNullOrWhiteSpace(argument))
+            {
+                throw new ArgumentException("Argument cannot be null or whitespace.", paramName);
+            }
+        }
     }
 
 }
