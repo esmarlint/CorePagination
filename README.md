@@ -39,9 +39,25 @@ var baseUrl = "http://myapi.com/entities";
 var paginatedResultWithUrls = await dbContext.Entities.PaginateUrlsAsync(page, pageSize, baseUrl);
 ```
 
-## Customization
+## Upcoming Changes
 
-CorePagination is extensible, allowing you to create your own paginator implementations if you need specific behaviors. Simply implement the `IPaginator<T>` interface in your custom class.
+🚀 **Version 0.2.0 Update Announcement**: We are excited to announce that CorePagination will soon be updated to version 0.2.0, bringing significant improvements and new features. Stay tuned for the release!
+
+## Roadmap to Version 1.0
+
+For the upcoming 1.0 release, we are planning to include:
+
+- **Enhanced Validations**: Adding guards and validations across methods to ensure robustness and handle nulls more effectively.
+- **Configurable Paginators**: Introducing stateful paginators with default configuration options.
+- **Comprehensive Documentation**: Expanding code documentation and providing detailed usage examples in both English and Spanish.
+- **NuGet and GitHub Packaging**: Making the library easily accessible and distributable through NuGet and GitHub packages.
+- **Unit Testing**: Strengthening the library with thorough unit tests.
+- **Branding**: Adding a logo to give CorePagination a unique identity.
+- **Continuous Improvement**: We are committed to continuously improving the library based on community feedback and evolving needs.
+
+### Beyond Version 1.0
+
+- **Version 2.0 and Future Releases**: We are already planning ahead for version 2.0 and beyond, focusing on performance benchmarks and testing to ensure CorePagination remains efficient and scalable.
 
 ## Contributing
 

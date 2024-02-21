@@ -160,3 +160,87 @@ public class CursorPaginator<T, TKey> : IPagination<T, CursorPaginationParameter
         };
     }
 }
+
+public static class PaginationResultExtensions
+{
+    public static TResult TransformTo<T, TResult>(
+        this IPaginationResult<T> paginationResult,
+        Func<IPaginationResult<T>, TResult> transformation) where TResult : class
+    {
+        return transformation(paginationResult);
+    }
+
+    public static TResult TransformToWithItems<T, TResult>(
+        this IPaginationResult<T> paginationResult,
+        Func<IPaginationResult<T>, TResult> transformation) where TResult : IPaginationResult<T>, new()
+    {
+        var result = transformation(paginationResult);
+        if (result is IPaginationResult<T> paginationResultWithItems)
+        {
+            paginationResultWithItems.Items = paginationResult.Items;
+        }
+        return result;
+    }
+}
+
+public interface IPaginationResultTransformer<T, TResult>
+    where T : class
+    where TResult : class
+{
+    TResult Transform(IPaginationResult<T> paginationResult);
+}
+
+public class SimpleUrlPaginationResultTransformer<T> : IPaginationResultTransformer<T, UrlPaginationResult<T>> where T : class
+{
+    private readonly string _baseUrl;
+
+    public SimpleUrlPaginationResultTransformer(string baseUrl)
+    {
+        _baseUrl = baseUrl ?? throw new ArgumentNullException(nameof(baseUrl));
+    }
+
+    public UrlPaginationResult<T> Transform(IPaginationResult<T> paginationResult)
+    {
+        var currentPage = paginationResult.CurrentPage;
+        var hasNextPage = true; 
+        var hasPrevPage = currentPage > 1;
+
+        return new UrlPaginationResult<T>
+        {
+            Items = paginationResult.Items,
+            PageSize = paginationResult.PageSize,
+            NextUrl = hasNextPage ? $"{_baseUrl}?page={currentPage + 1}" : null,
+            PreviusUrl = hasPrevPage ? $"{_baseUrl}?page={currentPage - 1}" : null,
+            CurrentUrl = $"{_baseUrl}?page={currentPage}"
+        };
+    }
+}
+
+public static class PaginatorExtensions
+{
+    public static async Task<SimplePaginationResult<T>> SimplePaginateAsync<T>(
+        this IQueryable<T> query, int pageSize, int pageNumber = 1)
+    {
+        var paginator = new SimplePaginator<T>();
+        var parameters = new PageNumberPaginationParameters { PageSize = pageSize, PageNumber = pageNumber };
+        return await paginator.PaginateAsync(query, parameters);
+    }
+
+    public static async Task<SizeAwarePaginationResult<T>> PaginateAsync<T>(
+        this IQueryable<T> query, int pageSize, int pageNumber = 1)
+    {
+        var paginator = new SizeAwarePaginator<T>();
+        var parameters = new PageNumberPaginationParameters { PageSize = pageSize, PageNumber = pageNumber };
+        return await paginator.PaginateAsync(query, parameters);
+    }
+
+    public static async Task<CursorPaginationResult<T, TKey>> CursorPaginateAsync<T, TKey>(
+        this IQueryable<T> query, Expression<Func<T, TKey>> keySelector, int pageSize, TKey currentCursor = default, PaginationOrder order = PaginationOrder.Ascending)
+        where T : class
+        where TKey : IComparable
+    {
+        var paginator = new CursorPaginator<T, TKey>(keySelector);
+        var parameters = new CursorPaginationParameters<TKey> { PageSize = pageSize, CurrentCursor = currentCursor, Order = order };
+        return await paginator.PaginateAsync(query, parameters);
+    }
+}
