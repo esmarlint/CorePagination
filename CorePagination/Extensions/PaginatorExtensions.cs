@@ -15,7 +15,7 @@ namespace CorePagination.Extensions
     public static class PaginatorExtensions
     {
         public static async Task<PaginationResult<T>> SimplePaginateAsync<T>(
-            this IQueryable<T> query, int pageSize, int pageNumber = 1)
+            this IQueryable<T> query, int pageNumber, int pageSize)
         {
             var paginator = new SimplePaginator<T>();
             var parameters = new PaginatorParameters { PageSize = pageSize, Page = pageNumber };
@@ -23,7 +23,7 @@ namespace CorePagination.Extensions
         }
 
         public static async Task<SizeAwarePaginationResult<T>> PaginateAsync<T>(
-            this IQueryable<T> query, int pageSize, int pageNumber = 1)
+            this IQueryable<T> query, int pageNumber , int pageSize)
         {
             var paginator = new SizeAwarePaginator<T>();
             var parameters = new PaginatorParameters { PageSize = pageSize, Page = pageNumber };
