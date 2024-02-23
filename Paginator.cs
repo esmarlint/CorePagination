@@ -1,132 +1,246 @@
+
+using System.Linq.Expressions;
+using System.Reflection;
 using Microsoft.EntityFrameworkCore;
 
-namespace CorePagination
+public interface IPagination<T, TParameters, TResult>
+    where TParameters : PaginationParameters
+    where TResult : class
 {
-    public interface IPaginator<T>
+    Task<TResult> PaginateAsync(IQueryable<T> query, TParameters parameters);
+}
+
+public class PaginationParameters
+{
+    public int PageSize { get; set; } = 10;
+}
+
+public class PageNumberPaginationParameters : PaginationParameters
+{
+    public int PageNumber { get; set; } = 1;
+}
+
+public enum PaginationOrder
+{
+    Ascending,
+    Descending
+}
+
+public class CursorPaginationParameters<TKey> : PaginationParameters
+{
+    public TKey CurrentCursor { get; set; }
+    public PaginationOrder Order { get; set; } = PaginationOrder.Ascending;
+}
+
+public interface IPaginationResult<T>
+{
+    IEnumerable<T> Items { get; set; }
+    int PageSize { get; set; }
+}
+
+public abstract class PaginationResult<T> : IPaginationResult<T>
+{
+    public IEnumerable<T> Items { get; set; }
+    public int PageSize { get; set; }
+}
+
+public class SimplePaginationResult<T> : PaginationResult<T>
+{
+    public int CurrentPage { get; set; }
+}
+
+public class TotalPaginationResult<T> : SimplePaginationResult<T>
+{
+    public int TotalItems { get; set; }
+}
+
+public class CursorPaginationResult<T, TKey> : PaginationResult<T>
+{
+    public TKey CurrentCursor { get; set; }
+    public TKey NextCursor { get; set; }
+
+    public bool HasMore { get; set; } 
+
+}
+
+public class SimplePaginator<T> : IPagination<T, PageNumberPaginationParameters, SimplePaginationResult<T>>
+{
+    public async Task<SimplePaginationResult<T>> PaginateAsync(IQueryable<T> query, PageNumberPaginationParameters parameters)
     {
-        Task<PaginationResult<T>> PaginateAsync(
-            IQueryable<T> query,
-            int page,
-            int pageSize,
-            bool calculateTotal = true
-        );
+        var items = await query.Skip((parameters.PageNumber - 1) * parameters.PageSize).Take(parameters.PageSize).ToListAsync();
+        return new SimplePaginationResult<T>
+        {
+            Items = items,
+            PageSize = parameters.PageSize,
+            CurrentPage = parameters.PageNumber
+        };
     }
 
-    public class Paginator<T> : IPaginator<T> where T : class
+    public async Task<SimplePaginationResult<T>> PaginateAsync(IQueryable<T> query, int pageNumber, int pageSize)
     {
-        public async Task<PaginationResult<T>> PaginateAsync(IQueryable<T> query, int page, int pageSize, bool calculateTotal = true)
+        var parameters = new PageNumberPaginationParameters { PageNumber = pageNumber, PageSize = pageSize };
+        return await PaginateAsync(query, parameters);
+    }
+}
+
+public class TotalPaginator<T> : IPagination<T, PageNumberPaginationParameters, TotalPaginationResult<T>>
+{
+    public async Task<TotalPaginationResult<T>> PaginateAsync(IQueryable<T> query, PageNumberPaginationParameters parameters)
+    {
+        var totalItems = await query.CountAsync();
+        var items = await query.Skip((parameters.PageNumber - 1) * parameters.PageSize).Take(parameters.PageSize).ToListAsync();
+        return new TotalPaginationResult<T>
         {
-            Guard.NotNull(query, nameof(query));
-            Guard.NotNegative(page, nameof(page));
-            Guard.NotNegative(pageSize, nameof(pageSize));
+            Items = items,
+            PageSize = parameters.PageSize,
+            CurrentPage = parameters.PageNumber,
+            TotalItems = totalItems
+        };
+    }
 
-            var result = new PaginationResult<T>
+    public async Task<TotalPaginationResult<T>> PaginateAsync(IQueryable<T> query, int pageNumber, int pageSize)
+    {
+        var parameters = new PageNumberPaginationParameters { PageNumber = pageNumber, PageSize = pageSize };
+        return await PaginateAsync(query, parameters);
+    }
+}
+
+public class CursorPaginator<T, TKey> : IPagination<T, CursorPaginationParameters<TKey>, CursorPaginationResult<T, TKey>>
+    where T : class
+    where TKey : IComparable
+{
+    private readonly Expression<Func<T, TKey>> _keySelector;
+
+    public CursorPaginator(Expression<Func<T, TKey>> keySelector)
+    {
+        _keySelector = keySelector ?? throw new ArgumentNullException(nameof(keySelector));
+    }
+
+    public async Task<CursorPaginationResult<T, TKey>> PaginateAsync(IQueryable<T> query, CursorPaginationParameters<TKey> parameters)
+    {
+        IQueryable<T> orderedQuery = parameters.Order == PaginationOrder.Ascending
+            ? query.OrderBy(_keySelector)
+            : query.OrderByDescending(_keySelector);
+
+        if (parameters.CurrentCursor != null)
+        {
+            var parameter = Expression.Parameter(typeof(T), "x");
+            var property = Expression.Invoke(_keySelector, parameter);
+            var cursorValue = Expression.Constant(parameters.CurrentCursor, typeof(TKey));
+            var comparison = parameters.Order == PaginationOrder.Ascending
+                ? Expression.GreaterThan(property, cursorValue)
+                : Expression.LessThan(property, cursorValue);
+            var lambda = Expression.Lambda<Func<T, bool>>(comparison, parameter);
+
+            orderedQuery = orderedQuery.Where(lambda);
+        }
+
+        var itemsWithPossibleNext = await orderedQuery.Take(parameters.PageSize + 1).ToListAsync();
+        var hasMore = itemsWithPossibleNext.Count > parameters.PageSize;
+        var items = itemsWithPossibleNext.Take(parameters.PageSize).ToList();
+
+        TKey nextCursor = default(TKey);
+        if (hasMore)
+        {
+            var propInfo = typeof(T).GetProperty(((_keySelector.Body as MemberExpression)?.Member as PropertyInfo)?.Name);
+            var lastItem = items.LastOrDefault();
+            if (lastItem != null && propInfo != null)
             {
-                CurrentPage = page,
-                PageSize = pageSize
-            };
-
-            result.Items = await query.Skip((page - 1) * pageSize).Take(pageSize).ToListAsync();
-
-            if (calculateTotal)
-            {
-                result.TotalCount = await query.CountAsync();
-                result.TotalPages = (int)Math.Ceiling(result.TotalCount / (double)pageSize);
+                nextCursor = (TKey)propInfo.GetValue(lastItem);
             }
-
-            return result;
         }
 
+        return new CursorPaginationResult<T, TKey>
+        {
+            Items = items,
+            PageSize = parameters.PageSize,
+            CurrentCursor = parameters.CurrentCursor,
+            NextCursor = nextCursor,
+            HasMore = hasMore
+        };
     }
+}
 
-    public class PaginatorWithUrls<T> : Paginator<T> where T : class
+public static class PaginationResultExtensions
+{
+    public static TResult TransformTo<T, TResult>(
+        this IPaginationResult<T> paginationResult,
+        Func<IPaginationResult<T>, TResult> transformation) where TResult : class
     {
-        private readonly string _baseUrl;
-
-        public PaginatorWithUrls(string baseUrl)
-        {
-            Guard.NotNullOrWhiteSpace(baseUrl, nameof(baseUrl));
-            _baseUrl = baseUrl;
-        }
-
-        public new async Task<PaginationResultWithUrls<T>> PaginateAsync(IQueryable<T> query, int page, int pageSize, bool calculateTotal = true)
-        {
-            Guard.NotNull(query, nameof(query));
-            Guard.NotNegative(page, nameof(page));
-            Guard.NotNegative(pageSize, nameof(pageSize));
-
-            var baseResult = await base.PaginateAsync(query, page, pageSize, calculateTotal);
-
-            var resultWithUrls = new PaginationResultWithUrls<T>
-            {
-                Items = baseResult.Items,
-                CurrentPage = baseResult.CurrentPage,
-                TotalPages = baseResult.TotalPages,
-                PageSize = baseResult.PageSize,
-                TotalCount = baseResult.TotalCount,
-                NextPageUrl = page < baseResult.TotalPages ? $"{_baseUrl}?page={page + 1}&pageSize={pageSize}" : null,
-                PreviousPageUrl = page > 1 ? $"{_baseUrl}?page={page - 1}&pageSize={pageSize}" : null,
-                FirstPageUrl = $"{_baseUrl}?page=1&pageSize={pageSize}",
-                LastPageUrl = $"{_baseUrl}?page={baseResult.TotalPages}&pageSize={pageSize}"
-            };
-
-            return resultWithUrls;
-        }
-
+        return transformation(paginationResult);
     }
 
-    public static class PaginationExtensions
+    public static TResult TransformToWithItems<T, TResult>(
+        this IPaginationResult<T> paginationResult,
+        Func<IPaginationResult<T>, TResult> transformation) where TResult : IPaginationResult<T>, new()
     {
-        public static async Task<PaginationResult<T>> PaginateAsync<T>(
-            this IQueryable<T> query,
-            int page,
-            int pageSize,
-            bool calculateTotal = true) where T : class
+        var result = transformation(paginationResult);
+        if (result is IPaginationResult<T> paginationResultWithItems)
         {
-            var paginator = new Paginator<T>();
-            return await paginator.PaginateAsync(query, page, pageSize, calculateTotal);
+            paginationResultWithItems.Items = paginationResult.Items;
         }
-
-        public static IQueryable<T> PreparePagination<T>(
-            this IQueryable<T> query,
-            int page,
-            int pageSize) where T : class
-        {
-            if (page < 1) page = 1;
-            if (pageSize < 1) pageSize = 10;
-
-            return query.Skip((page - 1) * pageSize).Take(pageSize);
-        }
-
-        public static async Task<PaginationResultWithUrls<T>> PaginateUrlsAsync<T>(
-           this IQueryable<T> query,
-           int page,
-           int pageSize,
-           string baseUrl, bool calculateTotal) where T : class
-        {
-            var paginatorWithUrls = new PaginatorWithUrls<T>(baseUrl);
-            return await paginatorWithUrls.PaginateAsync(query, page, pageSize, calculateTotal);
-        }
+        return result;
     }
+}
 
-    public class PaginationResult<T>
+public interface IPaginationResultTransformer<T, TResult>
+    where T : class
+    where TResult : class
+{
+    TResult Transform(IPaginationResult<T> paginationResult);
+}
+
+public class SimpleUrlPaginationResultTransformer<T> : IPaginationResultTransformer<T, UrlPaginationResult<T>> where T : class
+{
+    private readonly string _baseUrl;
+
+    public SimpleUrlPaginationResultTransformer(string baseUrl)
     {
-        public List<T> Items { get; set; }
-        public int CurrentPage { get; set; }
-        public int TotalPages { get; set; }
-        public int PageSize { get; set; }
-        public int TotalCount { get; set; }
-
-        public bool HasPrevious => CurrentPage > 1;
-        public bool HasNext => CurrentPage < TotalPages;
+        _baseUrl = baseUrl ?? throw new ArgumentNullException(nameof(baseUrl));
     }
 
-    public class PaginationResultWithUrls<T> : PaginationResult<T>
+    public UrlPaginationResult<T> Transform(IPaginationResult<T> paginationResult)
     {
-        public string NextPageUrl { get; set; }
-        public string PreviousPageUrl { get; set; }
-        public string FirstPageUrl { get; set; }
-        public string LastPageUrl { get; set; }
+        var currentPage = paginationResult.CurrentPage;
+        var hasNextPage = true; 
+        var hasPrevPage = currentPage > 1;
+
+        return new UrlPaginationResult<T>
+        {
+            Items = paginationResult.Items,
+            PageSize = paginationResult.PageSize,
+            NextUrl = hasNextPage ? $"{_baseUrl}?page={currentPage + 1}" : null,
+            PreviusUrl = hasPrevPage ? $"{_baseUrl}?page={currentPage - 1}" : null,
+            CurrentUrl = $"{_baseUrl}?page={currentPage}"
+        };
+    }
+}
+
+public static class PaginatorExtensions
+{
+    public static async Task<SimplePaginationResult<T>> SimplePaginateAsync<T>(
+        this IQueryable<T> query, int pageSize, int pageNumber = 1)
+    {
+        var paginator = new SimplePaginator<T>();
+        var parameters = new PageNumberPaginationParameters { PageSize = pageSize, PageNumber = pageNumber };
+        return await paginator.PaginateAsync(query, parameters);
     }
 
+    public static async Task<SizeAwarePaginationResult<T>> PaginateAsync<T>(
+        this IQueryable<T> query, int pageSize, int pageNumber = 1)
+    {
+        var paginator = new SizeAwarePaginator<T>();
+        var parameters = new PageNumberPaginationParameters { PageSize = pageSize, PageNumber = pageNumber };
+        return await paginator.PaginateAsync(query, parameters);
+    }
+
+    public static async Task<CursorPaginationResult<T, TKey>> CursorPaginateAsync<T, TKey>(
+        this IQueryable<T> query, Expression<Func<T, TKey>> keySelector, int pageSize, TKey currentCursor = default, PaginationOrder order = PaginationOrder.Ascending)
+        where T : class
+        where TKey : IComparable
+    {
+        var paginator = new CursorPaginator<T, TKey>(keySelector);
+        var parameters = new CursorPaginationParameters<TKey> { PageSize = pageSize, CurrentCursor = currentCursor, Order = order };
+        return await paginator.PaginateAsync(query, parameters);
+    }
 }
