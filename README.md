@@ -16,28 +16,79 @@ CorePagination is a lightweight and easy-to-use pagination library designed spec
 - .NET Core 3.1 or higher
 - Entity Framework Core 3.1 or higher
 
-## Basic Usage
+# CorePagination Usage Examples
 
-To start using CorePagination, you simply need to call the `PaginateAsync` extension method on your `IQueryable` query.
-
-```csharp
-using CorePagination;
-using Microsoft.EntityFrameworkCore;
-
-var page = 1;
-var pageSize = 10;
-
-var paginatedResult = await dbContext.Entities.PaginateAsync(page, pageSize);
-```
-
-### Pagination with URLs
-
-To use pagination that includes URLs for page navigation, you can use `PaginatorWithUrls` as follows:
+## Simple Paginator Example
 
 ```csharp
-var baseUrl = "http://myapi.com/entities";
-var paginatedResultWithUrls = await dbContext.Entities.PaginateUrlsAsync(page, pageSize, baseUrl);
+using CorePagination.Paginators.SimplePaginator;
+using System.Linq;
+using System.Threading.Tasks;
+
+var context = GetYourDbContext();  // Replace with your method to obtain DbContext
+
+// Simple pagination applying a filter
+var paginator = new SimplePaginator<Entity>();
+var result = await paginator.PaginateAsync(context.Entities.Where(x => x.IsActive), new PaginatorParameters { Page = 1, PageSize = 10 });
 ```
+
+## PaginateAsync Extension Method Example
+
+```csharp
+using CorePagination.Extensions;
+using System.Linq;
+using System.Threading.Tasks;
+
+var context = GetYourDbContext(); // Obtain your database context
+
+// Direct usage of PaginateAsync on a query
+var result = await context.Entities
+    .Where(entity => entity.Category == "Category1")
+    .PaginateAsync(pageSize: 10, pageNumber: 1);
+```
+
+## CursorPaginateAsync Example
+
+```csharp
+using CorePagination.Extensions;
+using System;
+using System.Linq;
+using System.Linq.Expressions;
+using System.Threading.Tasks;
+
+var context = GetYourDbContext(); // Get your database context
+
+// Cursor-based pagination directly on a query
+var result = await context.Entities
+    .Where(entity => entity.Status == "Active")
+    .CursorPaginateAsync(
+        keySelector: x => x.Id,
+        pageSize: 5,
+        currentCursor: 10, // Assuming an integer-based cursor
+        order: PaginationOrder.Ascending);
+```
+
+## Pagination Transformer Example
+
+```csharp
+using CorePagination.Extensions;
+using CorePagination.Tranformation.Transformers;
+using System.Linq;
+using System.Threading.Tasks;
+
+var context = GetYourDbContext(); // Database context
+
+// Assuming you already have a pagination result
+var paginationResult = await context.Entities
+    .Where(x => x.IsActive)
+    .PaginateAsync(pageSize: 10, pageNumber: 1);
+
+// Apply a transformer to the result
+var baseUrl = "http://example.com/api/entities";
+var transformer = new SimpleUrlResultTransformer<Entity>(baseUrl);
+var urlResult = transformer.Transform(paginationResult);
+```
+
 
 ## Upcoming Changes
 
