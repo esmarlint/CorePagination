@@ -29,7 +29,8 @@ var context = GetYourDbContext();  // Replace with your method to obtain DbConte
 
 // Simple pagination applying a filter
 var paginator = new SimplePaginator<Entity>();
-var result = await paginator.PaginateAsync(context.Entities.Where(x => x.IsActive), new PaginatorParameters { Page = 1, PageSize = 10 });
+var entities = context.Entities.Where(x => x.IsActive);
+var result = await paginator.PaginateAsync(entities, new PaginatorParameters { Page = 1, PageSize = 10 });
 ```
 
 ## PaginateAsync Extension Method Example
