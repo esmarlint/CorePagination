@@ -18,26 +18,81 @@ CorePagination is a lightweight and easy-to-use pagination library designed spec
 
 ## Basic Usage
 
-To start using CorePagination, you simply need to call the `PaginateAsync` extension method on your `IQueryable` query.
+Import the CorePagination.Extensions namespace to get started:
 
 ```csharp
-using CorePagination;
-using Microsoft.EntityFrameworkCore;
-
-var page = 1;
-var pageSize = 10;
-
-var paginatedResult = await dbContext.Entities.PaginateAsync(page, pageSize);
+using CorePagination.Extensions;
 ```
 
-### Pagination with URLs
+### Using `PaginateAsync`
 
-To use pagination that includes URLs for page navigation, you can use `PaginatorWithUrls` as follows:
+`PaginateAsync` is a comprehensive pagination method that provides detailed pagination results, including total item and page counts. It is particularly useful for user interfaces that require detailed pagination controls.
+
+#### Example with `PaginateAsync`
+
+Below is an example demonstrating how to use `PaginateAsync` to paginate a list of `Product` entities:
 
 ```csharp
-var baseUrl = "http://myapi.com/entities";
-var paginatedResultWithUrls = await dbContext.Entities.PaginateUrlsAsync(page, pageSize, baseUrl);
+var context = new ApplicationDbContext();
+var products = context.Products;
+
+int pageNumber = 1;
+int pageSize = 10;
+
+var paginationResult = await products.PaginateAsync(pageNumber, pageSize);
+
+// paginationResult includes:
+// Items: List of products on the current page.
+// TotalItems: Total count of products.
+// TotalPages: Total number of pages.
+// Page: Current page number.
+// PageSize: Number of items per page.
 ```
+
+### Using `SimplePaginateAsync`
+
+`SimplePaginateAsync` provides a basic pagination mechanism without the total count of items or pages.
+
+#### Example with `SimplePaginateAsync`
+
+```csharp
+var context = new ApplicationDbContext();
+var products = context.Products;
+
+int pageNumber = 1;
+int pageSize = 10;
+
+var paginationResult = await products.SimplePaginateAsync(pageNumber, pageSize);
+
+// paginationResult includes:
+// Items: Current page's list of products.
+// Page: Current page number.
+// PageSize: Number of items per page.
+```
+
+### Using `CursorPaginateAsync`
+
+`CursorPaginateAsync` is ideal for efficient and stateful pagination, such as infinite scrolling.
+
+#### Example with `CursorPaginateAsync`
+
+```csharp
+var context = new ApplicationDbContext();
+var products = context.Products.OrderBy(p => p.Id);
+
+int pageSize = 10;
+int? currentCursorId = null;
+
+var paginationResult = await products.CursorPaginateAsync(
+    p => p.Id, pageSize, currentCursorId, PaginationOrder.Ascending);
+
+// paginationResult includes:
+// Items: List of products for the current segment.
+// PageSize: Number of items per segment.
+// Cursor: Current cursor position.
+```
+
+These examples aim to provide clear and concise guidance for using CorePagination effectively in your applications.
 
 ## Upcoming Changes
 
