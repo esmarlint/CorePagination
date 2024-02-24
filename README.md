@@ -16,7 +16,7 @@ CorePagination is a lightweight and easy-to-use pagination library designed spec
 - .NET Core 3.1 or higher
 - Entity Framework Core 3.1 or higher
 
-## Basic Usage
+# CorePagination Usage Examples
 
 Import the CorePagination.Extensions namespace to get started:
 
