@@ -1,4 +1,6 @@
-﻿namespace CorePagination.Contracts
+﻿using CorePagination.Paginators.Common;
+
+namespace CorePagination.Contracts
 {
     public interface IPaginationResult<T>
     {

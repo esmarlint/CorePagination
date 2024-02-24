@@ -18,78 +18,81 @@ CorePagination is a lightweight and easy-to-use pagination library designed spec
 
 # CorePagination Usage Examples
 
-## Simple Paginator Example
-
-```csharp
-using CorePagination.Paginators.SimplePaginator;
-using System.Linq;
-using System.Threading.Tasks;
-
-var context = GetYourDbContext();  // Replace with your method to obtain DbContext
-
-// Simple pagination applying a filter
-var paginator = new SimplePaginator<Entity>();
-var entities = context.Entities.Where(x => x.IsActive);
-var result = await paginator.PaginateAsync(entities, new PaginatorParameters { Page = 1, PageSize = 10 });
-```
-
-## PaginateAsync Extension Method Example
+Import the CorePagination.Extensions namespace to get started:
 
 ```csharp
 using CorePagination.Extensions;
-using System.Linq;
-using System.Threading.Tasks;
-
-var context = GetYourDbContext(); // Obtain your database context
-
-// Direct usage of PaginateAsync on a query
-var result = await context.Entities
-    .Where(entity => entity.Category == "Category1")
-    .PaginateAsync(pageSize: 10, pageNumber: 1);
 ```
 
-## CursorPaginateAsync Example
+### Using `PaginateAsync`
+
+`PaginateAsync` is a comprehensive pagination method that provides detailed pagination results, including total item and page counts. It is particularly useful for user interfaces that require detailed pagination controls.
+
+#### Example with `PaginateAsync`
+
+Below is an example demonstrating how to use `PaginateAsync` to paginate a list of `Product` entities:
 
 ```csharp
-using CorePagination.Extensions;
-using System;
-using System.Linq;
-using System.Linq.Expressions;
-using System.Threading.Tasks;
+var context = new ApplicationDbContext();
+var products = context.Products;
 
-var context = GetYourDbContext(); // Get your database context
+int pageNumber = 1;
+int pageSize = 10;
 
-// Cursor-based pagination directly on a query
-var result = await context.Entities
-    .Where(entity => entity.Status == "Active")
-    .CursorPaginateAsync(
-        keySelector: x => x.Id,
-        pageSize: 5,
-        currentCursor: 10, // Assuming an integer-based cursor
-        order: PaginationOrder.Ascending);
+var paginationResult = await products.PaginateAsync(pageNumber, pageSize);
+
+// paginationResult includes:
+// Items: List of products on the current page.
+// TotalItems: Total count of products.
+// TotalPages: Total number of pages.
+// Page: Current page number.
+// PageSize: Number of items per page.
 ```
 
-## Pagination Transformer Example
+### Using `SimplePaginateAsync`
+
+`SimplePaginateAsync` provides a basic pagination mechanism without the total count of items or pages.
+
+#### Example with `SimplePaginateAsync`
 
 ```csharp
-using CorePagination.Extensions;
-using CorePagination.Tranformation.Transformers;
-using System.Linq;
-using System.Threading.Tasks;
+var context = new ApplicationDbContext();
+var products = context.Products;
 
-var context = GetYourDbContext(); // Database context
+int pageNumber = 1;
+int pageSize = 10;
 
-// Assuming you already have a pagination result
-var paginationResult = await context.Entities
-    .Where(x => x.IsActive)
-    .PaginateAsync(pageSize: 10, pageNumber: 1);
+var paginationResult = await products.SimplePaginateAsync(pageNumber, pageSize);
 
-// Apply a transformer to the result
-var baseUrl = "http://example.com/api/entities";
-var transformer = new SimpleUrlResultTransformer<Entity>(baseUrl);
-var urlResult = transformer.Transform(paginationResult);
+// paginationResult includes:
+// Items: Current page's list of products.
+// Page: Current page number.
+// PageSize: Number of items per page.
 ```
 
+### Using `CursorPaginateAsync`
+
+`CursorPaginateAsync` is ideal for efficient and stateful pagination, such as infinite scrolling.
+
+#### Example with `CursorPaginateAsync`
+
+```csharp
+var context = new ApplicationDbContext();
+var products = context.Products.OrderBy(p => p.Id);
+
+int pageSize = 10;
+int? currentCursorId = null;
+
+var paginationResult = await products.CursorPaginateAsync(
+    p => p.Id, pageSize, currentCursorId, PaginationOrder.Ascending);
+
+// paginationResult includes:
+// Items: List of products for the current segment.
+// PageSize: Number of items per segment.
+// Cursor: Current cursor position.
+```
+
+These examples aim to provide clear and concise guidance for using CorePagination effectively in your applications.
 
 ## Upcoming Changes
 
