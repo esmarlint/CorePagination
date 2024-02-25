@@ -1,5 +1,6 @@
 ﻿using CorePagination.Contracts;
 using CorePagination.Paginators.Common;
+using CorePagination.Support;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -13,6 +14,9 @@ namespace CorePagination.Paginators.SimplePaginator
     {
         public async Task<PaginationResult<T>> PaginateAsync(IQueryable<T> query, PaginatorParameters parameters)
         {
+            Guard.NotNull(query, nameof(query));
+            Guard.NotNull(parameters, nameof(parameters));
+
             var items = await query.Skip((parameters.Page - 1) * parameters.PageSize).Take(parameters.PageSize).ToListAsync();
             return new PaginationResult<T>
             {
