@@ -1,5 +1,6 @@
 ﻿using CorePagination.Contracts;
 using CorePagination.Paginators.Common;
+using CorePagination.Support;
 using CorePagination.Tranformation.Contracts;
 
 namespace CorePagination.Tranformation.Transformers
@@ -10,11 +11,14 @@ namespace CorePagination.Tranformation.Transformers
 
         public SimpleUrlResultTransformer(string baseUrl)
         {
-            _baseUrl = baseUrl ?? throw new ArgumentNullException(nameof(baseUrl));
+            Guard.NotNull(baseUrl, nameof(baseUrl));
+            _baseUrl = baseUrl;
         }
 
         public UrlPaginationResult<T> Transform(IPaginationResult<T> paginationResult)
         {
+            Guard.NotNull(paginationResult, nameof(paginationResult));
+
             var currentPage = paginationResult.Page;
             var hasNextPage = true;
             var hasPrevPage = currentPage > 1;
