@@ -15,7 +15,8 @@ namespace CorePagination.Paginators.CursorPaginator {
 
         public CursorPaginator(Expression<Func<T, TKey>> keySelector)
         {
-            _keySelector = keySelector ?? throw new ArgumentNullException(nameof(keySelector));
+            Guard.NotNull(keySelector, nameof(keySelector));
+            _keySelector = keySelector;
         }
 
         public async Task<CursorPaginationResult<T, TKey>> PaginateAsync(IQueryable<T> query, CursorPaginationParameters<TKey> parameters)

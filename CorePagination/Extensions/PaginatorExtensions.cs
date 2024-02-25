@@ -3,6 +3,7 @@ using CorePagination.Paginators.Common;
 using CorePagination.Paginators.CursorPaginator;
 using CorePagination.Paginators.SimplePaginator;
 using CorePagination.Paginators.SizeAwarePaginator;
+using CorePagination.Support;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -18,6 +19,8 @@ namespace CorePagination.Extensions
         public static async Task<PaginationResult<T>> SimplePaginateAsync<T>(
             this IQueryable<T> query, int pageNumber, int pageSize)
         {
+            Guard.NotNull(query, nameof(query));
+
             var items = await query.Skip((pageNumber - 1) * pageSize).Take(pageSize).ToListAsync();
             return new PaginationResult<T>
             {
@@ -31,6 +34,8 @@ namespace CorePagination.Extensions
         public static async Task<SizeAwarePaginationResult<T>> PaginateAsync<T>(
             this IQueryable<T> query, int pageNumber, int pageSize)
         {
+            Guard.NotNull(query, nameof(query));
+
             var items = await query.Skip((pageNumber - 1) * pageSize).Take(pageSize).ToListAsync();
             var totalItems = await query.CountAsync();
             var totalPages = (int)Math.Ceiling(totalItems / (double)pageSize);
@@ -50,6 +55,9 @@ namespace CorePagination.Extensions
             where T : class
             where TKey : IComparable
         {
+            Guard.NotNull(query, nameof(query));
+            Guard.NotNull(keySelector, nameof(keySelector));
+
             var paginator = new CursorPaginator<T, TKey>(keySelector);
             var parameters = new CursorPaginationParameters<TKey> { PageSize = pageSize, CurrentCursor = currentCursor, Order = order };
             return await paginator.PaginateAsync(query, parameters);
