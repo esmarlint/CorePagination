@@ -29,16 +29,4 @@ namespace CorePagination.Paginators.SimplePaginator
             return await PaginateAsync(query, parameters);
         }
     }
-
-    public abstract class AbstractPaginator<T, TParameters, TResult>
-    where TParameters : PagePaginatorParameters
-    where TResult : class, IPaginationResult<T>, new()
-    {
-        public abstract Task<TResult> PaginateAsync(IQueryable<T> query, TParameters parameters);
-
-        public abstract Task<TResult> NextPage(IQueryable<T> query, TParameters parameters);
-
-        public abstract Task<TResult> PreviousPage(IQueryable<T> query, TParameters parameters);
-    }
-
 }
