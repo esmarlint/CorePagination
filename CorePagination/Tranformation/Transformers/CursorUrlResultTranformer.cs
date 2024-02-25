@@ -1,6 +1,7 @@
 ﻿using CorePagination.Contracts;
 using CorePagination.Paginators.Common;
 using CorePagination.Paginators.Fast;
+using CorePagination.Support;
 using CorePagination.Tranformation.Contracts;
 using System;
 using System.Collections.Generic;
@@ -18,11 +19,14 @@ namespace CorePagination.Tranformation.Transformers
 
         public CursorUrlResultTranformer(string baseUrl)
         {
-            _baseUrl = baseUrl ?? throw new ArgumentNullException(nameof(baseUrl));
+            Guard.NotNull(baseUrl, nameof(baseUrl));
+            _baseUrl = baseUrl;
         }
 
         public CursorUrlPaginationResult<T, TKey> Transform(IPaginationResult<T> paginationResult)
         {
+            Guard.NotNull(paginationResult, nameof(paginationResult));
+
             var cursorResult = paginationResult as CursorPaginationResult<T, TKey>;
             if (cursorResult == null) throw new InvalidOperationException("The pagination result is not a cursor pagination result.");
 

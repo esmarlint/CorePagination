@@ -1,5 +1,6 @@
 ﻿using CorePagination.Contracts;
 using CorePagination.Paginators.Common;
+using CorePagination.Support;
 using Microsoft.EntityFrameworkCore;
 
 namespace CorePagination.Paginators.SizeAwarePaginator
@@ -8,6 +9,9 @@ namespace CorePagination.Paginators.SizeAwarePaginator
     {
         public async Task<SizeAwarePaginationResult<T>> PaginateAsync(IQueryable<T> query, PaginatorParameters parameters)
         {
+            Guard.NotNull(query, nameof(query));
+            Guard.NotNull(parameters, nameof(parameters));
+
             var items = await query.Skip((parameters.Page - 1) * parameters.PageSize).Take(parameters.PageSize).ToListAsync();
             var totalItems = await query.CountAsync();
             var totalPages = (int)Math.Ceiling(totalItems / (double)parameters.PageSize);

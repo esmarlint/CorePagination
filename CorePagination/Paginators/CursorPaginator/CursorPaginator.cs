@@ -3,6 +3,7 @@ using System.Linq.Expressions;
 using System.Reflection;
 using CorePagination.Common;
 using CorePagination.Contracts;
+using CorePagination.Support;
 using Microsoft.EntityFrameworkCore;
 
 namespace CorePagination.Paginators.CursorPaginator { 
@@ -14,11 +15,15 @@ namespace CorePagination.Paginators.CursorPaginator {
 
         public CursorPaginator(Expression<Func<T, TKey>> keySelector)
         {
-            _keySelector = keySelector ?? throw new ArgumentNullException(nameof(keySelector));
+            Guard.NotNull(keySelector, nameof(keySelector));
+            _keySelector = keySelector;
         }
 
         public async Task<CursorPaginationResult<T, TKey>> PaginateAsync(IQueryable<T> query, CursorPaginationParameters<TKey> parameters)
         {
+            Guard.NotNull(query, nameof(query));
+            Guard.NotNull(parameters, nameof(parameters));
+
             IQueryable<T> orderedQuery = parameters.Order == PaginationOrder.Ascending
                 ? query.OrderBy(_keySelector)
                 : query.OrderByDescending(_keySelector);

@@ -1,4 +1,6 @@
 ﻿using CorePagination.Contracts;
+using CorePagination.Paginators.SimplePaginator;
+using CorePagination.Support;
 
 namespace CorePagination.Tranformation.Extensions
 {
@@ -8,6 +10,8 @@ namespace CorePagination.Tranformation.Extensions
             this IPaginationResult<T> paginationResult,
             Func<IPaginationResult<T>, TResult> transformation) where TResult : class
         {
+            Guard.NotNull(paginationResult, nameof(paginationResult));
+
             return transformation(paginationResult);
         }
 
@@ -15,6 +19,8 @@ namespace CorePagination.Tranformation.Extensions
             this IPaginationResult<T> paginationResult,
             Func<IPaginationResult<T>, TResult> transformation) where TResult : IPaginationResult<T>, new()
         {
+            Guard.NotNull(paginationResult, nameof(paginationResult));
+
             var result = transformation(paginationResult);
             if (result is IPaginationResult<T> paginationResultWithItems)
             {
