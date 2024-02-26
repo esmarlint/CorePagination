@@ -120,4 +120,4 @@ Contributions are welcome! If you have ideas for improving the library or have f
 
 ## License
 
-CorePagination is licensed under the [MIT License](LICENSE). Feel free to use, modify, and distribute it as you see fit.
+CorePagination is licensed under the [Apache License](LICENSE). Feel free to use, modify, and distribute it as you see fit.
