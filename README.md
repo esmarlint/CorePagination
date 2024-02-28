@@ -94,6 +94,75 @@ var paginationResult = await products.CursorPaginateAsync(
 
 These examples aim to provide clear and concise guidance for using CorePagination effectively in your applications.
 
+### Transformers in CorePagination
+
+#### What are transformers in CorePagination
+
+Transformers in CorePagination are designed to modify or enhance the pagination results, allowing for additional data manipulation or formatting tailored to specific requirements. They provide a powerful way to adapt the paginated results into different formats or structures, facilitating their integration into various application contexts.
+
+### Using Existing Transformers
+
+CorePagination includes a set of predefined transformers that can be applied to your pagination results for common use cases. For instance, the `UrlResultTransformer` can be used to enrich pagination results with navigational URLs, which is particularly useful for web APIs.
+
+#### Example: Applying `UrlResultTransformer`
+
+```csharp
+var context = new ApplicationDbContext();
+var products = context.Products;
+string baseUrl = "http://example.com/products";
+
+var paginationResult = await products.PaginateAsync(pageNumber, pageSize);
+var urlPaginationResult = paginationResult.Transform(new UrlResultTransformer<Product>(baseUrl));
+```
+
+In this example, `UrlResultTransformer` is used to append navigation URLs to the pagination result, enhancing its integration capabilities for client-side applications or APIs.
+
+### Using Inline Transformations
+
+Inline transformations allow you to apply custom transformations directly within your code, offering a quick and flexible way to adjust the output of pagination results.
+
+#### Example: Inline Transformation
+
+```csharp
+var paginationResult = await products.PaginateAsync(pageNumber, pageSize);
+var customResult = paginationResult.Transform(result => new {
+    SimpleItems = result.Items.Select(item => new { item.Id, item.Name }),
+    result.Page,
+    result.PageSize,
+    result.TotalItems
+});
+```
+
+This inline transformation simplifies the paginated result, selecting only the `Id` and `Name` from each item, which might be particularly useful for reducing payload sizes in API responses.
+
+### Creating and Using Your Own Transformers
+
+You can extend CorePagination by creating your own transformers, implementing the `IPaginationTransformer<T, TResult>` interface to define custom logic for transforming pagination results.
+
+#### Example: Creating a Custom Transformer
+
+```csharp
+public class MyCustomTransformer : IPaginationTransformer<Product, MyCustomProductResult>
+{
+    public MyCustomProductResult Transform(IPaginationResult<Product> paginationResult)
+    {
+        // Custom transformation logic
+        return new MyCustomProductResult {
+            CustomItems = paginationResult.Items.Select(item => new CustomItem { ... }),
+            paginationResult.TotalItems
+        };
+    }
+}
+```
+
+```csharp
+var paginationResult = await products.PaginateAsync(pageNumber, pageSize);
+var myCustomResult = paginationResult.Transform(new MyCustomTransformer());
+```
+
+This section demonstrates how to create a `MyCustomTransformer` that applies specific transformation logic to the pagination results, illustrating the extensibility of CorePagination for various application needs.
+
+
 ## Upcoming Changes
 
 🚀 **Version 0.2.0 Update Announcement**: We are excited to announce that CorePagination will soon be updated to version 0.2.0, bringing significant improvements and new features. Stay tuned for the release!
