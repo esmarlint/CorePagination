@@ -39,7 +39,7 @@ var products = context.Products;
 int pageNumber = 1;
 int pageSize = 10;
 
-var paginationResult = await products.PaginateAsync(pageNumber, pageSize);
+SizeAwarePaginationResult<Product> paginationResult = await products.PaginateAsync(pageNumber, pageSize);
 
 // paginationResult includes:
 // Items: List of products on the current page.
@@ -51,7 +51,7 @@ var paginationResult = await products.PaginateAsync(pageNumber, pageSize);
 
 ### Using `SimplePaginateAsync`
 
-`SimplePaginateAsync` provides a basic pagination mechanism without the total count of items or pages.
+`SimplePaginateAsync` provides a basic pagination mechanism without the total count of items or pages, typically offering faster performance than PaginateAsync by eliminating the need for total count calculations.
 
 #### Example with `SimplePaginateAsync`
 
@@ -62,7 +62,7 @@ var products = context.Products;
 int pageNumber = 1;
 int pageSize = 10;
 
-var paginationResult = await products.SimplePaginateAsync(pageNumber, pageSize);
+PaginationResult<Product> paginationResult = await products.SimplePaginateAsync(pageNumber, pageSize);
 
 // paginationResult includes:
 // Items: Current page's list of products.
