@@ -3,6 +3,26 @@
 
 CorePagination is a lightweight and easy-to-use pagination library designed specifically for Entity Framework Core (EF Core). It offers a straightforward and extensible way to add pagination functionality to your .NET projects, improving efficiency and management of large datasets.
 
+## Table of Contents
+
+- [Introduction](#CorePagination)
+- [Features](#features)
+- [Requirements](#requirements)
+- [CorePagination Usage Examples](#corepagination-usage-examples)
+  - [Using `PaginateAsync`](#using-paginateasync)
+  - [Using `SimplePaginateAsync`](#using-simplepaginateasync)
+  - [Using `CursorPaginateAsync`](#using-cursorpaginateasync)
+- [Transformers](#transformers-in-corepagination)
+  - [What are Transformers?](#what-are-transformers)
+  - [Using Existing Transformers](#using-existing-transformers)
+  - [Using Inline Transformations](#using-inline-transformations)
+  - [Creating and Using Your Own Transformers](#creating-and-using-your-own-transformers)
+- [Upcoming Changes](#upcoming-changes)
+- [Roadmap to Version 1.0](#roadmap-to-version-10)
+- [Contributing](#contributing)
+- [License](#license)
+
+
 ## Features
 
 - **Easy to Integrate**: Seamlessly integrates with any EF Core project.
@@ -96,7 +116,7 @@ These examples aim to provide clear and concise guidance for using CorePaginatio
 
 ### Transformers in CorePagination
 
-#### What are transformers in CorePagination
+#### What are transformers
 
 Transformers in CorePagination are designed to modify or enhance the pagination results, allowing for additional data manipulation or formatting tailored to specific requirements. They provide a powerful way to adapt the paginated results into different formats or structures, facilitating their integration into various application contexts.
 
