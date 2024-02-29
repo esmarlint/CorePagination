@@ -9,12 +9,25 @@ namespace CorePagination.Tranformation.Transformers
     {
         private readonly string _baseUrl;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="SizeAwareUrlResultTransformer{T}"/> class.
+        /// This constructor sets up the transformer with the base URL to be used for generating navigation links.
+        /// </summary>
+        /// <param name="baseUrl">The base URL to be used for appending navigation links to the pagination results.</param>
+        /// <exception cref="ArgumentNullException">Thrown when the baseUrl is null or empty.</exception>
         public SizeAwareUrlResultTransformer(string baseUrl)
         {
             Guard.NotNull(baseUrl, nameof(baseUrl));
             _baseUrl = baseUrl;
         }
 
+        /// <summary>
+        /// Transforms a given pagination result into a URL-enhanced pagination result.
+        /// This transformer is particularly useful for adding navigation links to API responses.
+        /// </summary>
+        /// <param name="paginationResult">The pagination result to transform.</param>
+        /// <returns>A <see cref="UrlPaginationResult{T}"/> that includes navigational URLs based on the current pagination state.</returns>
+        /// <exception cref="ArgumentNullException">Thrown when the input pagination result is null.</exception>
         public UrlPaginationResult<T> Transform(IPaginationResult<T> paginationResult)
         {
             Guard.NotNull(paginationResult, nameof(paginationResult));
