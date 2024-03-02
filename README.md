@@ -10,14 +10,18 @@ CorePagination is a lightweight and easy-to-use pagination library designed spec
 - [Features](#features)
 - [Requirements](#requirements)
 - [CorePagination Usage Examples](#corepagination-usage-examples)
-  - [Using `PaginateAsync`](#using-paginateasync)
-  - [Using `SimplePaginateAsync`](#using-simplepaginateasync)
-  - [Using `CursorPaginateAsync`](#using-cursorpaginateasync)
+    - [Using `PaginateAsync`](#using-paginateasync)
+    - [Using `SimplePaginateAsync`](#using-simplepaginateasync)
+    - [Using `CursorPaginateAsync`](#using-cursorpaginateasync)
+- [Paginators](#paginators)
+    - [SimplePaginator](#simplepaginator)
+    - [SizeAwarePaginator](#sizeawarepaginator)
+    - [CursorPaginator](#cursorpaginator)
 - [Transformers](#transformers-in-corepagination)
-  - [What are Transformers?](#what-are-transformers)
-  - [Using Existing Transformers](#using-existing-transformers)
-  - [Using Inline Transformations](#using-inline-transformations)
-  - [Creating and Using Your Own Transformers](#creating-and-using-your-own-transformers)
+    - [What are Transformers?](#what-are-transformers)
+    - [Using Existing Transformers](#using-existing-transformers)
+    - [Using Inline Transformations](#using-inline-transformations)
+    - [Creating and Using Your Own Transformers](#creating-and-using-your-own-transformers)
 - [Upcoming Changes](#upcoming-changes)
 - [Roadmap to Version 1.0](#roadmap-to-version-10)
 - [Contributing](#contributing)
@@ -114,6 +118,75 @@ var paginationResult = await products.CursorPaginateAsync(
 ```
 
 These examples aim to provide clear and concise guidance for using CorePagination effectively in your applications.
+
+
+# Paginators
+
+Paginators are the core components of the CorePagination library, designed to abstract the complexity of pagination logic, making it easy and efficient to paginate large datasets. They provide a robust and flexible framework for implementing various pagination strategies, tailored to different application requirements and optimization needs. While paginators represent the core machinery for pagination, extensions are provided to streamline their use in everyday coding, offering a simpler interface that abstracts away some of the underlying complexities.
+
+## Using Paginators
+
+To leverage paginators directly in your application, you first need to understand the available paginator types and how to apply them according to your specific data retrieval and presentation needs.
+
+### SimplePaginator
+
+The `SimplePaginator` provides basic pagination functionality, fetching a specified page of data without computing the total number of items or pages. This approach is particularly efficient when you do not need to display total counts in your UI.
+
+#### Example with `SimplePaginator`:
+
+```csharp
+var context = new ApplicationDbContext();
+var productsQuery = context.Products.AsQueryable();
+var simplePaginator = new SimplePaginator<Product>();
+
+int pageNumber = 1;
+int pageSize = 10;
+
+var parameters = new PaginatorParameters { Page = pageNumber, PageSize = pageSize };
+var simplePaginationResult = await simplePaginator.PaginateAsync(productsQuery, parameters);
+```
+
+This result provides a straightforward set of items for the specified page, alongside basic pagination metadata like page number and page size.
+
+### SizeAwarePaginator
+
+The `SizeAwarePaginator` extends the basic pagination functionality by also computing the total number of items and the total number of pages. This paginator is suitable for interfaces that require detailed pagination controls.
+
+#### Example with `SizeAwarePaginator`:
+
+```csharp
+var context = new ApplicationDbContext();
+var productsQuery = context.Products.AsQueryable();
+var sizeAwarePaginator = new SizeAwarePaginator<Product>();
+
+int pageNumber = 1;
+int pageSize = 10;
+
+var parameters = new PaginatorParameters { Page = pageNumber, PageSize = pageSize };
+var sizeAwarePaginationResult = await sizeAwarePaginator.PaginateAsync(productsQuery, parameters);
+```
+
+In this example, `sizeAwarePaginationResult` includes detailed pagination information, facilitating the creation of more informative and interactive UI pagination components.
+
+### CursorPaginator
+
+The `CursorPaginator` is ideal for scenarios where continuous data loading is required, such as infinite scrolling or cursor-based navigation. It paginates data based on a cursor, typically an identifier or a timestamp, allowing for efficient retrieval of subsequent data segments.
+
+#### Example with `CursorPaginator`:
+
+```csharp
+var context = new ApplicationDbContext();
+var productsQuery = context.Products.OrderBy(p => p.Id).AsQueryable();
+var cursorPaginator = new CursorPaginator<Product, int>(p => p.Id);
+
+int pageSize = 10;
+int? currentCursor = null;
+
+var cursorPaginationResult = await cursorPaginator.PaginateAsync(productsQuery, new CursorPaginationParameters<int> { PageSize = pageSize, CurrentCursor = currentCursor });
+```
+
+Here, `cursorPaginationResult` provides not only the current page of items but also the cursor for accessing the next segment, optimizing data loading for user experiences that require seamless data fetching.
+
 
 ### Transformers in CorePagination
 
