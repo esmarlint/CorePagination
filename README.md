@@ -66,7 +66,8 @@ var products = context.Products;
 int pageNumber = 1;
 int pageSize = 10;
 
-SizeAwarePaginationResult<Product> paginationResult = await products.PaginateAsync(pageNumber, pageSize);
+//paginationResult: SizeAwarePaginationResult<Product>
+var paginationResult = await products.PaginateAsync(pageNumber, pageSize);
 
 // paginationResult includes:
 // Items: List of products on the current page.
@@ -89,7 +90,8 @@ var products = context.Products;
 int pageNumber = 1;
 int pageSize = 10;
 
-PaginationResult<Product> paginationResult = await products.SimplePaginateAsync(pageNumber, pageSize);
+//paginationResult: PaginationResult<Product>
+var paginationResult = await products.SimplePaginateAsync(pageNumber, pageSize);
 
 // paginationResult includes:
 // Items: Current page's list of products.
