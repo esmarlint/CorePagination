@@ -17,6 +17,8 @@ CorePagination is a lightweight and easy-to-use pagination library designed spec
     - [SimplePaginator](#simplepaginator)
     - [SizeAwarePaginator](#sizeawarepaginator)
     - [CursorPaginator](#cursorpaginator)
+    - [Creating Your Own Paginator](#creating-your-own-paginator)
+    
 - [Transformers](#transformers-in-corepagination)
     - [What are Transformers?](#what-are-transformers)
     - [Using Existing Transformers](#using-existing-transformers)
@@ -186,6 +188,33 @@ var cursorPaginationResult = await cursorPaginator.PaginateAsync(productsQuery, 
 ```
 
 Here, `cursorPaginationResult` provides not only the current page of items but also the cursor for accessing the next segment, optimizing data loading for user experiences that require seamless data fetching.
+
+### Creating Your Own Paginator
+
+To create your own paginator, you need to implement the `IPagination<T, TParameters, TResult>` interface. This custom paginator can then be tailored to specific requirements, such as a unique pagination strategy or data source.
+
+#### Example: Creating a Custom Paginator:
+
+```csharp
+public class MyCustomPaginator<T> : IPagination<T, MyCustomPaginatorParameters, MyCustomPaginationResult<T>>
+{
+    public async Task<MyCustomPaginationResult<T>> PaginateAsync(IQueryable<T> query, MyCustomPaginatorParameters parameters)
+    {
+        // Implement your custom pagination logic here
+        var items = await query.Skip(parameters.Page * parameters.PageSize).Take(parameters.PageSize).ToListAsync();
+
+        return new MyCustomPaginationResult<T>
+        {
+            Items = items,
+            Page = parameters.Page,
+            PageSize = parameters.PageSize,
+            // Add additional pagination-related information if needed
+        };
+    }
+}
+```
+
+In this example, `MyCustomPaginator` provides a template for implementing pagination logic that fits your specific needs, offering flexibility beyond the built-in paginators.
 
 
 ### Transformers in CorePagination
