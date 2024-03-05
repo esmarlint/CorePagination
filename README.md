@@ -1,8 +1,6 @@
-
 # CorePagination
 
 CorePagination is a lightweight and easy-to-use pagination library designed specifically for Entity Framework Core (EF Core). It offers a straightforward and extensible way to add pagination functionality to your .NET projects, improving efficiency and management of large datasets. By leveraging CorePagination, developers can avoid the complexity of creating custom pagination logic from scratch, benefiting from pre-built methods that are optimized for performance and flexibility. Additionally, the library's support for transformers, like the `UrlResultTransformer`, provides out-of-the-box solutions for common pagination challenges, such as generating navigation URLs, thereby saving development time and enhancing user experience. This makes CorePagination an ideal choice for projects that require reliable, scalable, and easy-to-implement pagination solutions.
-
 
 ## Table of Contents
 
@@ -18,7 +16,6 @@ CorePagination is a lightweight and easy-to-use pagination library designed spec
     - [SizeAwarePaginator](#sizeawarepaginator)
     - [CursorPaginator](#cursorpaginator)
     - [Creating Your Own Paginator](#creating-your-own-paginator)
-    
 - [Transformers](#transformers-in-corepagination)
     - [What are Transformers?](#what-are-transformers)
     - [Using Existing Transformers](#using-existing-transformers)
@@ -28,7 +25,6 @@ CorePagination is a lightweight and easy-to-use pagination library designed spec
 - [Roadmap to Version 1.0](#roadmap-to-version-10)
 - [Contributing](#contributing)
 - [License](#license)
-
 
 ## Features
 
@@ -122,7 +118,6 @@ var paginationResult = await products.CursorPaginateAsync(
 ```
 
 These examples aim to provide clear and concise guidance for using CorePagination effectively in your applications.
-
 
 # Paginators
 
@@ -286,7 +281,6 @@ var myCustomResult = paginationResult.Transform(new MyCustomTransformer());
 ```
 
 This section demonstrates how to create a `MyCustomTransformer` that applies specific transformation logic to the pagination results, illustrating the extensibility of CorePagination for various application needs.
-
 
 ## Upcoming Changes
 
