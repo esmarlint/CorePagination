@@ -1,3 +1,5 @@
+![Banner](docs/images/banner.png)
+
 # CorePagination
 
 CorePagination is a lightweight and easy-to-use pagination library designed specifically for Entity Framework Core (EF Core). It offers a straightforward and extensible way to add pagination functionality to your .NET projects, improving efficiency and management of large datasets. By leveraging CorePagination, developers can avoid the complexity of creating custom pagination logic from scratch, benefiting from pre-built methods that are optimized for performance and flexibility. Additionally, the library's support for transformers, like the `UrlResultTransformer`, provides out-of-the-box solutions for common pagination challenges, such as generating navigation URLs, thereby saving development time and enhancing user experience. This makes CorePagination an ideal choice for projects that require reliable, scalable, and easy-to-implement pagination solutions.
