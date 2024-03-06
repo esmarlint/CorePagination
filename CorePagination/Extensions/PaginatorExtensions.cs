@@ -16,6 +16,16 @@ namespace CorePagination.Extensions
 {
     public static class PaginatorExtensions
     {
+        /// <summary>
+        /// Asynchronously paginates a queryable source based on the specified page number and page size.
+        /// </summary>
+        /// <typeparam name="T">The type of the elements in the source.</typeparam>
+        /// <param name="query">The queryable source to paginate.</param>
+        /// <param name="pageNumber">The one-based page index.</param>
+        /// <param name="pageSize">The size of the page.</param>
+        /// <returns>A task that represents the asynchronous operation. The task result contains the <see cref="PaginationResult{T}"/>.</returns>
+        /// <exception cref="ArgumentNullException">Thrown if the query is null.</exception>
+        /// <exception cref="ArgumentOutOfRangeException">Thrown if pageNumber or pageSize are less than one.</exception>
         public static async Task<PaginationResult<T>> SimplePaginateAsync<T>(
             this IQueryable<T> query, int pageNumber, int pageSize)
         {
@@ -31,6 +41,16 @@ namespace CorePagination.Extensions
             };
         }
 
+        /// <summary>
+        /// Asynchronously paginates a queryable source based on the provided pagination parameters, including total item and page counts.
+        /// </summary>
+        /// <typeparam name="T">The type of the elements in the source.</typeparam>
+        /// <param name="query">The queryable source to paginate.</param>
+        /// <param name="pageNumber">The one-based page index.</param>
+        /// <param name="pageSize">The size of the page.</param>
+        /// <returns>A task that represents the asynchronous operation. The task result contains the <see cref="SizeAwarePaginationResult{T}"/>.</returns>
+        /// <exception cref="ArgumentNullException">Thrown if the query is null.</exception>
+        /// <exception cref="ArgumentOutOfRangeException">Thrown if pageNumber or pageSize are less than one.</exception>
         public static async Task<SizeAwarePaginationResult<T>> PaginateAsync<T>(
             this IQueryable<T> query, int pageNumber, int pageSize)
         {
@@ -50,6 +70,16 @@ namespace CorePagination.Extensions
             };
         }
 
+        /// <summary>
+        /// Asynchronously paginates a queryable source based on cursor parameters, suitable for implementing efficient, stateful pagination.
+        /// </summary>
+        /// <typeparam name="T">The type of the elements in the source.</typeparam>
+        /// <typeparam name="TKey">The type used for the cursor property.</typeparam>
+        /// <param name="query">The queryable source to paginate.</param>
+        /// <param name="parameters">The cursor pagination parameters including the page size, current cursor, and pagination order.</param>
+        /// <returns>A task that represents the asynchronous operation. The task result contains the <see cref="CursorPaginationResult{T, TKey}"/>, 
+        /// which includes the set of items for the current page, the current cursor, and an indication if more items are available.</returns>
+        /// <exception cref="ArgumentNullException">Thrown if the query is null or if the parameters are null.</exception>
         public static async Task<CursorPaginationResult<T, TKey>> CursorPaginateAsync<T, TKey>(
             this IQueryable<T> query, Expression<Func<T, TKey>> keySelector, int pageSize, TKey currentCursor = default, PaginationOrder order = PaginationOrder.Ascending)
             where T : class
