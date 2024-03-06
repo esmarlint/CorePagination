@@ -1,6 +1,6 @@
 ﻿using CorePagination.Contracts;
 using CorePagination.Paginators.Common;
-using CorePagination.Paginators.Fast;
+using CorePagination.Paginators.CursorPaginator;
 using CorePagination.Support;
 using CorePagination.Tranformation.Contracts;
 using System;
