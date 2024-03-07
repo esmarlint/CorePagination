@@ -285,28 +285,36 @@ This section demonstrates how to create a `MyCustomTransformer` that applies spe
 
 ## Upcoming Changes
 
-🚀 **Version 0.2.0 Update Announcement**: We are excited to announce that CorePagination will soon be updated to version 0.2.0, bringing significant improvements and new features. Stay tuned for the release!
+🎉 **Version 0.2.1 Released**: CorePagination version 0.2.1 is now available on NuGet! This release includes various improvements and bug fixes to enhance the library's functionality and reliability.
 
 ## Roadmap to Version 1.0
 
 For the upcoming 1.0 release, we are planning to include:
 
-- **Enhanced Validations**: Adding guards and validations across methods to ensure robustness and handle nulls more effectively.
-- **Configurable Paginators**: Introducing stateful paginators with default configuration options.
-- **Comprehensive Documentation**: Expanding code documentation and providing detailed usage examples in both English and Spanish.
-- **NuGet and GitHub Packaging**: Making the library easily accessible and distributable through NuGet and GitHub packages.
-- **Unit Testing**: Strengthening the library with thorough unit tests.
-- **Branding**: Adding a logo to give CorePagination a unique identity.
-- **Continuous Improvement**: We are committed to continuously improving the library based on community feedback and evolving needs.
+- ✓ **Enhanced Validations**: Guards applied across methods for robustness and null handling.
+- X **Configurable Paginators**: Stateful paginators with default configuration options (discarded until further notice).
+- **Comprehensive Documentation**:
+  - Expanding code documentation and providing detailed usage examples.
+  - ✓ XML documentation added to the codebase for easier usage and understanding.
+  - X Spanish documentation (discarded until future versions).
+- ✓ **Branding**: Logo selected for CorePagination.
+- **Unit Testing**: Pending
+- **Benchmarks**: Pending
+- **NuGet Packaging**: CorePagination is available on NuGet.
+- **GitHub Packaging**: In progress, will be added soon.
+- **Basic Extensions**: Inclusion of basic extensions to facilitate the usage of the library.
 
-### Beyond Version 1.0
-
-- **Version 2.0 and Future Releases**: We are already planning ahead for version 2.0 and beyond, focusing on performance benchmarks and testing to ensure CorePagination remains efficient and scalable.
+The primary focus for version 1.0.0 is to deliver a solid foundation with unit tests, comprehensive documentation, benchmarks, base paginators, base transformers, and basic extensions to ensure a smooth development experience.
 
 ## Contributing
 
-Contributions are welcome! If you have ideas for improving the library or have found a bug, feel free to create an issue or submit a pull request.
+Contributions are highly welcome and appreciated! If you'd like to contribute to CorePagination, you can help with:
+
+- Unit Tests: Enhance the library's reliability by adding unit tests.
+- Benchmarks: Provide performance benchmarks to demonstrate the efficiency of CorePagination.
+- Documentation: Improve the documentation by fixing typos, clarifying explanations, or adding more examples.
+- Bug Fixes and Enhancements: If you encounter any issues or have ideas for improvements, please submit a pull request or open an issue on our GitHub repository.
 
 ## License
 
-CorePagination is licensed under the [Apache License](LICENSE). Feel free to use, modify, and distribute it as you see fit.
+CorePagination is licensed under the [Apache License](LICENSE). Feel free to use, modify, and distribute it as per the terms of the license.
