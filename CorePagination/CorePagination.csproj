@@ -1,13 +1,45 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net8.0</TargetFramework>
+    <TargetFramework>net7.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
+    <GenerateDocumentationFile>True</GenerateDocumentationFile>
+    <Description>A lightweight library for paging data with EF Core, featuring easy implementation and extensibility</Description>
+    <PackageProjectUrl>https://github.com/esmarlint/CorePagination</PackageProjectUrl>
+    <PackageIcon>logo.png</PackageIcon>
+    <RepositoryUrl>https://github.com/esmarlint/CorePagination</RepositoryUrl>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <RepositoryType>git</RepositoryType>
+    <PackageTags>pagination, efcore, library, pagination-library</PackageTags>
+    <PackageReleaseNotes>Add documentation xml files
+Add tranformation examples
+Remove useless classes</PackageReleaseNotes>
+    <Title>CorePagination</Title>
+    <FileVersion>0.2.1</FileVersion>
+    <AssemblyVersion>0.2.1</AssemblyVersion>
+    <ApplicationIcon>logo.ico</ApplicationIcon>
+    <Version>0.2.1</Version>
+    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.2" />
+    <Content Include="logo.ico" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="..\..\..\Downloads\logo.png">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
+    <None Include="..\README.md">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="3.0.1" />
   </ItemGroup>
 
 </Project>
