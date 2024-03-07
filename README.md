@@ -6,23 +6,23 @@ CorePagination is a lightweight and easy-to-use pagination library designed spec
 
 ## Table of Contents
 
-- [Introduction](#CorePagination)
+- [Introduction](#corepagination)
 - [Features](#features)
 - [Requirements](#requirements)
 - [CorePagination Usage Examples](#corepagination-usage-examples)
-    - [Using `PaginateAsync`](#using-paginateasync)
-    - [Using `SimplePaginateAsync`](#using-simplepaginateasync)
-    - [Using `CursorPaginateAsync`](#using-cursorpaginateasync)
+  - [Using `PaginateAsync`](#using-paginateasync)
+  - [Using `SimplePaginateAsync`](#using-simplepaginateasync)
+  - [Using `CursorPaginateAsync`](#using-cursorpaginateasync)
 - [Paginators](#paginators)
-    - [SimplePaginator](#simplepaginator)
-    - [SizeAwarePaginator](#sizeawarepaginator)
-    - [CursorPaginator](#cursorpaginator)
-    - [Creating Your Own Paginator](#creating-your-own-paginator)
+  - [SimplePaginator](#simplepaginator)
+  - [SizeAwarePaginator](#sizeawarepaginator)
+  - [CursorPaginator](#cursorpaginator)
+  - [Creating Your Own Paginator](#creating-your-own-paginator)
 - [Transformers](#transformers-in-corepagination)
-    - [What are Transformers?](#what-are-transformers)
-    - [Using Existing Transformers](#using-existing-transformers)
-    - [Using Inline Transformations](#using-inline-transformations)
-    - [Creating and Using Your Own Transformers](#creating-and-using-your-own-transformers)
+  - [What are Transformers?](#what-are-transformers)
+  - [Using Existing Transformers](#using-existing-transformers)
+  - [Using Inline Transformations](#using-inline-transformations)
+  - [Creating and Using Your Own Transformers](#creating-and-using-your-own-transformers)
 - [Upcoming Changes](#upcoming-changes)
 - [Roadmap to Version 1.0](#roadmap-to-version-10)
 - [Contributing](#contributing)
@@ -49,11 +49,11 @@ Import the CorePagination.Extensions namespace to get started:
 using CorePagination.Extensions;
 ```
 
-### Using `PaginateAsync`
+## Using `PaginateAsync`
 
 `PaginateAsync` is a comprehensive pagination method that provides detailed pagination results, including total item and page counts. It is particularly useful for user interfaces that require detailed pagination controls.
 
-#### Example with `PaginateAsync`
+### Example with `PaginateAsync`
 
 Below is an example demonstrating how to use `PaginateAsync` to paginate a list of `Product` entities:
 
@@ -133,7 +133,7 @@ To leverage paginators directly in your application, you first need to understan
 
 The `SimplePaginator` provides basic pagination functionality, fetching a specified page of data without computing the total number of items or pages. This approach is particularly efficient when you do not need to display total counts in your UI.
 
-#### Example with `SimplePaginator`:
+#### Example with `SimplePaginator`
 
 ```csharp
 var context = new ApplicationDbContext();
@@ -153,7 +153,7 @@ This result provides a straightforward set of items for the specified page, alon
 
 The `SizeAwarePaginator` extends the basic pagination functionality by also computing the total number of items and the total number of pages. This paginator is suitable for interfaces that require detailed pagination controls.
 
-#### Example with `SizeAwarePaginator`:
+#### Example with `SizeAwarePaginator`
 
 ```csharp
 var context = new ApplicationDbContext();
@@ -173,7 +173,7 @@ In this example, `sizeAwarePaginationResult` includes detailed pagination inform
 
 The `CursorPaginator` is ideal for scenarios where continuous data loading is required, such as infinite scrolling or cursor-based navigation. It paginates data based on a cursor, typically an identifier or a timestamp, allowing for efficient retrieval of subsequent data segments.
 
-#### Example with `CursorPaginator`:
+#### Example with `CursorPaginator`
 
 ```csharp
 var context = new ApplicationDbContext();
@@ -192,7 +192,7 @@ Here, `cursorPaginationResult` provides not only the current page of items but a
 
 To create your own paginator, you need to implement the `IPagination<T, TParameters, TResult>` interface. This custom paginator can then be tailored to specific requirements, such as a unique pagination strategy or data source.
 
-#### Example: Creating a Custom Paginator:
+#### Example: Creating a Custom Paginator
 
 ```csharp
 public class MyCustomPaginator<T> : IPagination<T, MyCustomPaginatorParameters, MyCustomPaginationResult<T>>
@@ -214,7 +214,6 @@ public class MyCustomPaginator<T> : IPagination<T, MyCustomPaginatorParameters, 
 ```
 
 In this example, `MyCustomPaginator` provides a template for implementing pagination logic that fits your specific needs, offering flexibility beyond the built-in paginators.
-
 
 ### Transformers in CorePagination
 
