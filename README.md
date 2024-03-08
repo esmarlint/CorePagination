@@ -75,6 +75,19 @@ var paginationResult = await products.PaginateAsync(pageNumber, pageSize);
 // PageSize: Number of items per page.
 ```
 
+### Example with `SimplePaginateAsync` and Search Filter
+
+```csharp
+var context = new ApplicationDbContext();
+var searchTerm = "example";
+var filteredProducts = context.Products.Where(p => p.Name.Contains(searchTerm));
+
+int pageNumber = 1;
+int pageSize = 10;
+
+var paginationResult = await filteredProducts.SimplePaginateAsync(pageNumber, pageSize);
+```
+
 ### Using `SimplePaginateAsync`
 
 `SimplePaginateAsync` provides a basic pagination mechanism without the total count of items or pages, typically offering faster performance than PaginateAsync by eliminating the need for total count calculations.
