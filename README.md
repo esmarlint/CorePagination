@@ -75,6 +75,19 @@ var paginationResult = await products.PaginateAsync(pageNumber, pageSize);
 // PageSize: Number of items per page.
 ```
 
+### Example with `SimplePaginateAsync` and Search Filter
+
+```csharp
+var context = new ApplicationDbContext();
+var searchTerm = "example";
+var filteredProducts = context.Products.Where(p => p.Name.Contains(searchTerm));
+
+int pageNumber = 1;
+int pageSize = 10;
+
+var paginationResult = await filteredProducts.SimplePaginateAsync(pageNumber, pageSize);
+```
+
 ### Using `SimplePaginateAsync`
 
 `SimplePaginateAsync` provides a basic pagination mechanism without the total count of items or pages, typically offering faster performance than PaginateAsync by eliminating the need for total count calculations.
@@ -118,6 +131,17 @@ var paginationResult = await products.CursorPaginateAsync(
 // PageSize: Number of items per segment.
 // Cursor: Current cursor position.
 ```
+
+#### Example with `CursorPaginateAsync` and Date-Based Cursor
+
+var context = new ApplicationDbContext();
+var currentCursor = DateTime.Now.AddDays(-7);
+var products = context.Products.OrderByDescending(p => p.CreatedAt);
+
+int pageSize = 20;
+
+var paginationResult = await products.CursorPaginateAsync(
+    p => p.CreatedAt, pageSize, currentCursor, PaginationOrder.Descending);
 
 These examples aim to provide clear and concise guidance for using CorePagination effectively in your applications.
 
@@ -282,6 +306,37 @@ var myCustomResult = paginationResult.Transform(new MyCustomTransformer());
 ```
 
 This section demonstrates how to create a `MyCustomTransformer` that applies specific transformation logic to the pagination results, illustrating the extensibility of CorePagination for various application needs.
+
+### Example with Custom Transformer for Summary Data
+
+```csharp
+public class ProductSummaryTransformer : IPaginationTransformer<Product, ProductSummaryResult>
+{
+    public ProductSummaryResult Transform(IPaginationResult<Product> paginationResult)
+    {
+        return new ProductSummaryResult
+        {
+            Items = paginationResult.Items.Select(p => new ProductSummary
+            {
+                Id = p.Id,
+                Name = p.Name,
+                Price = p.Price
+            }),
+            TotalItems = paginationResult.TotalItems
+            // Other relevant summary fields
+        };
+    }
+}
+
+var context = new ApplicationDbContext();
+var products = context.Products;
+
+int pageNumber = 1;
+int pageSize = 10;
+
+var paginationResult = await products.PaginateAsync(pageNumber, pageSize);
+var summaryResult = paginationResult.Transform(new ProductSummaryTransformer());
+```
 
 ## Upcoming Changes
 
