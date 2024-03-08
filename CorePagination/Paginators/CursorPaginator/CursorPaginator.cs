@@ -6,19 +6,35 @@ using CorePagination.Contracts;
 using CorePagination.Support;
 using Microsoft.EntityFrameworkCore;
 
-namespace CorePagination.Paginators.CursorPaginator { 
+namespace CorePagination.Paginators.CursorPaginator {
+
+    /// <summary>
+    /// Represents a paginator that provides cursor-based pagination functionality.
+    /// </summary>
+    /// <typeparam name="T">The type of the elements to be paginated.</typeparam>
+    /// <typeparam name="TKey">The type of the cursor property.</typeparam>
     public class CursorPaginator<T, TKey> : IPagination<T, CursorPaginationParameters<TKey>, CursorPaginationResult<T, TKey>>
         where T : class
         where TKey : IComparable
     {
         private readonly Expression<Func<T, TKey>> _keySelector;
 
+        /// <summary>
+        /// Initializes a new instance of the CursorPaginator class with the specified key selector.
+        /// </summary>
+        /// <param name="keySelector">The expression used to select the cursor property.</param>
         public CursorPaginator(Expression<Func<T, TKey>> keySelector)
         {
             Guard.NotNull(keySelector, nameof(keySelector));
             _keySelector = keySelector;
         }
 
+        /// <summary>
+        /// Paginates the provided IQueryable based on the given CursorPaginationParameters.
+        /// </summary>
+        /// <param name="query">The IQueryable to be paginated.</param>
+        /// <param name="parameters">The parameters for cursor-based pagination, including page size, current cursor, and pagination order.</param>
+        /// <returns>A CursorPaginationResult containing the paginated items, current cursor, next cursor, and a flag indicating if there are more items.</returns>
         public async Task<CursorPaginationResult<T, TKey>> PaginateAsync(IQueryable<T> query, CursorPaginationParameters<TKey> parameters)
         {
             Guard.NotNull(query, nameof(query));
