@@ -5,8 +5,18 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CorePagination.Paginators.SizeAwarePaginator
 {
+    /// <summary>
+    /// Represents a paginator that provides pagination functionality with total item and page count.
+    /// </summary>
+    /// <typeparam name="T">The type of the elements to be paginated.</typeparam>
     public class SizeAwarePaginator<T> : IPagination<T, PaginatorParameters, SizeAwarePaginationResult<T>>
     {
+        /// <summary>
+        /// Paginates the provided IQueryable based on the given PaginatorParameters and calculates total item and page count.
+        /// </summary>
+        /// <param name="query">The IQueryable to be paginated.</param>
+        /// <param name="parameters">The parameters for pagination, including page number and page size.</param>
+        /// <returns>A SizeAwarePaginationResult containing the paginated items, total item count, total page count, and other pagination information.</returns>
         public async Task<SizeAwarePaginationResult<T>> PaginateAsync(IQueryable<T> query, PaginatorParameters parameters)
         {
             Guard.NotNull(query, nameof(query));
@@ -26,6 +36,13 @@ namespace CorePagination.Paginators.SizeAwarePaginator
             };
         }
 
+        /// <summary>
+        /// Paginates the provided IQueryable based on the given page number and page size, and calculates total item and page count.
+        /// </summary>
+        /// <param name="query">The IQueryable to be paginated.</param>
+        /// <param name="pageNumber">The page number of the desired page.</param>
+        /// <param name="pageSize">The number of items per page.</param>
+        /// <returns>A SizeAwarePaginationResult containing the paginated items, total item count, total page count, and other pagination information.</returns>
         public async Task<SizeAwarePaginationResult<T>> PaginateAsync(IQueryable<T> query, int pageNumber, int pageSize)
         {
             var parameters = new PaginatorParameters { Page = pageNumber, PageSize = pageSize };
