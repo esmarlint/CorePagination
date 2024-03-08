@@ -307,6 +307,37 @@ var myCustomResult = paginationResult.Transform(new MyCustomTransformer());
 
 This section demonstrates how to create a `MyCustomTransformer` that applies specific transformation logic to the pagination results, illustrating the extensibility of CorePagination for various application needs.
 
+### Example with Custom Transformer for Summary Data
+
+```csharp
+public class ProductSummaryTransformer : IPaginationTransformer<Product, ProductSummaryResult>
+{
+    public ProductSummaryResult Transform(IPaginationResult<Product> paginationResult)
+    {
+        return new ProductSummaryResult
+        {
+            Items = paginationResult.Items.Select(p => new ProductSummary
+            {
+                Id = p.Id,
+                Name = p.Name,
+                Price = p.Price
+            }),
+            TotalItems = paginationResult.TotalItems
+            // Other relevant summary fields
+        };
+    }
+}
+
+var context = new ApplicationDbContext();
+var products = context.Products;
+
+int pageNumber = 1;
+int pageSize = 10;
+
+var paginationResult = await products.PaginateAsync(pageNumber, pageSize);
+var summaryResult = paginationResult.Transform(new ProductSummaryTransformer());
+```
+
 ## Upcoming Changes
 
 🎉 **Version 0.2.1 Released**: CorePagination version 0.2.1 is now available on NuGet! This release includes various improvements and bug fixes to enhance the library's functionality and reliability.
