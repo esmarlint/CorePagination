@@ -132,6 +132,17 @@ var paginationResult = await products.CursorPaginateAsync(
 // Cursor: Current cursor position.
 ```
 
+#### Example with `CursorPaginateAsync` and Date-Based Cursor
+
+var context = new ApplicationDbContext();
+var currentCursor = DateTime.Now.AddDays(-7);
+var products = context.Products.OrderByDescending(p => p.CreatedAt);
+
+int pageSize = 20;
+
+var paginationResult = await products.CursorPaginateAsync(
+    p => p.CreatedAt, pageSize, currentCursor, PaginationOrder.Descending);
+
 These examples aim to provide clear and concise guidance for using CorePagination effectively in your applications.
 
 # Paginators
