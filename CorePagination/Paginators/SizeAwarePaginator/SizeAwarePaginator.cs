@@ -10,7 +10,7 @@ namespace CorePagination.Paginators.SizeAwarePaginator
     /// Represents a paginator that provides pagination functionality with total item and page count.
     /// </summary>
     /// <typeparam name="T">The type of the elements to be paginated.</typeparam>
-    public class SizeAwarePaginator<T> : IPagination<T, PaginatorParameters, SizeAwarePaginationResult<T>>
+    public class SizeAwarePaginator<T> : IPaginationAsync<T, PaginatorParameters, SizeAwarePaginationResult<T>>
     {
         /// <summary>
         /// Paginates the provided IQueryable based on the given PaginatorParameters and calculates total item and page count.

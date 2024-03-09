@@ -14,7 +14,7 @@ namespace CorePagination.Paginators.SimplePaginator
     /// Represents a simple paginator that provides basic pagination functionality.
     /// </summary>
     /// <typeparam name="T">The type of the elements to be paginated.</typeparam>
-    public class SimplePaginator<T> : IPagination<T, PaginatorParameters, PaginationResult<T>>
+    public class SimplePaginator<T> : IPaginationAsync<T, PaginatorParameters, PaginationResult<T>>
     {
         /// <summary>
         /// Paginates the provided IQueryable based on the given PaginatorParameters.

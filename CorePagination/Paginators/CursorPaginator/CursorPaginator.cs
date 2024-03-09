@@ -13,7 +13,7 @@ namespace CorePagination.Paginators.CursorPaginator {
     /// </summary>
     /// <typeparam name="T">The type of the elements to be paginated.</typeparam>
     /// <typeparam name="TKey">The type of the cursor property.</typeparam>
-    public class CursorPaginator<T, TKey> : IPagination<T, CursorPaginationParameters<TKey>, CursorPaginationResult<T, TKey>>
+    public class CursorPaginator<T, TKey> : IPaginationAsync<T, CursorPaginationParameters<TKey>, CursorPaginationResult<T, TKey>>
         where T : class
         where TKey : IComparable
     {
