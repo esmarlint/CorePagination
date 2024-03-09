@@ -22,6 +22,27 @@ namespace CorePagination.Paginators.SimplePaginator
         /// <param name="query">The IQueryable to be paginated.</param>
         /// <param name="parameters">The parameters for pagination, including page number and page size.</param>
         /// <returns>A PaginationResult containing the paginated items and pagination information.</returns>
+        public PaginationResult<T> Paginate(IQueryable<T> query, PaginatorParameters parameters)
+        {
+            Guard.NotNull(query, nameof(query));
+            Guard.NotNull(parameters, nameof(parameters));
+
+            var items = query.Skip((parameters.Page - 1) * parameters.PageSize).Take(parameters.PageSize).ToList();
+            return new PaginationResult<T>
+            {
+                Items = items,
+                PageSize = parameters.PageSize,
+                Page = parameters.Page,
+                TotalItems = null
+            };
+        }
+
+        /// <summary>
+        /// Paginates the provided IQueryable based on the given PaginatorParameters.
+        /// </summary>
+        /// <param name="query">The IQueryable to be paginated.</param>
+        /// <param name="parameters">The parameters for pagination, including page number and page size.</param>
+        /// <returns>A PaginationResult containing the paginated items and pagination information.</returns>
         public async Task<PaginationResult<T>> PaginateAsync(IQueryable<T> query, PaginatorParameters parameters)
         {
             Guard.NotNull(query, nameof(query));
