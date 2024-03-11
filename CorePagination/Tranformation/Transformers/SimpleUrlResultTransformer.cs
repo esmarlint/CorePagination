@@ -12,7 +12,7 @@ namespace CorePagination.Tranformation.Transformers
     /// Ideal for web APIs where consumers need to navigate through paginated results. It appends URL links for navigating between pages.
     /// </remarks>
     /// <typeparam name="T">The type of the elements in the pagination result.</typeparam>
-    public class SimpleUrlResultTransformer<T> : IPaginationTranformer<T, UrlPaginationResult<T>> where T : class
+    public class SimpleUrlResultTransformer<T> : UrlResultTransformerBase<T, UrlPaginationResult<T>> where T : class
     {
         private readonly string _baseUrl;
         private readonly Dictionary<string, string> _parametersToInclude = new Dictionary<string, string>();
@@ -35,7 +35,7 @@ namespace CorePagination.Tranformation.Transformers
         /// <param name="paginationResult">The pagination result to be transformed.</param>
         /// <returns>A <see cref="UrlPaginationResult{T}"/> that includes navigational URLs for the paginated data.</returns>
         /// <exception cref="ArgumentNullException">Thrown if the paginationResult is null.</exception>
-        public UrlPaginationResult<T> Transform(IPaginationResult<T> paginationResult)
+        public override UrlPaginationResult<T> Transform(IPaginationResult<T> paginationResult)
         {
             Guard.NotNull(paginationResult, nameof(paginationResult));
 
@@ -70,59 +70,6 @@ namespace CorePagination.Tranformation.Transformers
             };
         }
 
-        private string CreateUrl(string route) => string.IsNullOrEmpty(_baseUrl) ? route : $"{_baseUrl}{route}";
-
-        #region Fluent API
-
-        /// <summary>
-        /// Includes the 'page' parameter in the URL generation.
-        /// </summary>
-        /// <returns>The <see cref="SimpleUrlResultTransformer{T}"/> instance for chaining.</returns>
-        public SimpleUrlResultTransformer<T> IncludePage()
-        {
-            _parametersToInclude["page"] = "page";
-            return this;
-        }
-
-        /// <summary>
-        /// Includes the 'pageSize' parameter in the URL generation.
-        /// </summary>
-        /// <returns>The <see cref="SimpleUrlResultTransformer{T}"/> instance for chaining.</returns>
-        public SimpleUrlResultTransformer<T> IncludePageSize()
-        {
-            _parametersToInclude["pageSize"] = "pageSize";
-            return this;
-        }
-
-        /// <summary>
-        /// Renames a parameter for the URL generation.
-        /// </summary>
-        /// <param name="originalName">The original parameter name.</param>
-        /// <param name="newName">The new parameter name.</param>
-        /// <returns>The <see cref="SimpleUrlResultTransformer{T}"/> instance for chaining.</returns>
-        public SimpleUrlResultTransformer<T> RenameParameter(string originalName, string newName)
-        {
-            if (_parametersToInclude.ContainsKey(originalName))
-            {
-                _parameterRenames[originalName] = newName;
-            }
-
-            return this;
-        }
-
-        /// <summary>
-        /// Adds a custom parameter to the URL generation.
-        /// </summary>
-        /// <param name="name">The parameter name.</param>
-        /// <param name="value">The parameter value.</param>
-        /// <returns>The <see cref="SimpleUrlResultTransformer{T}"/> instance for chaining.</returns>
-        public SimpleUrlResultTransformer<T> AddParameter(string name, string value)
-        {
-            _parametersToInclude[name] = value;
-            return this;
-        }
-
-        #endregion Fluent API
     }
 
 }

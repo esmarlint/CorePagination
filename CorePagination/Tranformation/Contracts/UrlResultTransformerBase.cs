@@ -3,13 +3,13 @@ using CorePagination.Paginators.Common;
 
 namespace CorePagination.Tranformation.Contracts
 {
-    public abstract class UrlResultTransformerBase<T, TResult> : IPaginationTranformer<T, TResult> where T : class where TResult : UrlPaginationResult<T>, new()
+    public abstract class UrlResultTransformerBase<T, TResult> : IPaginationTranformer<T, TResult> where T : class where TResult : class, new()
     {
         protected readonly string _baseUrl;
         protected readonly Dictionary<string, string> _parametersToInclude = new Dictionary<string, string>();
         protected readonly Dictionary<string, string> _parameterRenames = new Dictionary<string, string>();
 
-        protected UrlResultTransformerBase(string baseUrl)
+        protected UrlResultTransformerBase(string baseUrl = "")
         {
             _baseUrl = baseUrl;
         }

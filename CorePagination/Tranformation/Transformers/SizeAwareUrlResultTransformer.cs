@@ -5,7 +5,7 @@ using CorePagination.Tranformation.Contracts;
 
 namespace CorePagination.Tranformation.Transformers
 {
-    public class SizeAwareUrlResultTransformer<T> : IPaginationTranformer<T, UrlPaginationResult<T>> where T : class
+    public class SizeAwareUrlResultTransformer<T> : UrlResultTransformerBase<T, UrlPaginationResult<T>> where T : class
     {
         private readonly string _baseUrl;
 
@@ -28,7 +28,7 @@ namespace CorePagination.Tranformation.Transformers
         /// <param name="paginationResult">The pagination result to transform.</param>
         /// <returns>A <see cref="UrlPaginationResult{T}"/> that includes navigational URLs based on the current pagination state.</returns>
         /// <exception cref="ArgumentNullException">Thrown when the input pagination result is null.</exception>
-        public UrlPaginationResult<T> Transform(IPaginationResult<T> paginationResult)
+        public override UrlPaginationResult<T> Transform(IPaginationResult<T> paginationResult)
         {
             Guard.NotNull(paginationResult, nameof(paginationResult));
 
