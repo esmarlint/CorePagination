@@ -13,7 +13,7 @@ namespace CorePagination.Paginators.Common
         public IEnumerable<T> Items { get; set; }
         public int PageSize { get; set; }
         public string NextUrl { get; set; }
-        public string PreviusUrl { get; set; }
+        public string PreviousUrl { get; set; }
         public string CurrentUrl { get; internal set; }
         public int Page { get; set; }
         public int? TotalItems { get; set; }

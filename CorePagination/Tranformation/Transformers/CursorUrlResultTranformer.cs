@@ -22,7 +22,7 @@ namespace CorePagination.Tranformation.Transformers
     /// </remarks>
     /// <typeparam name="T">The type of the elements in the pagination result.</typeparam>
     /// <typeparam name="TKey">The type of the cursor.</typeparam>
-    public class CursorUrlResultTranformer<T, TKey> : IPaginationTranformer<T, CursorUrlPaginationResult<T, TKey>>
+    public class CursorUrlResultTranformer<T, TKey> : UrlResultTransformerBase<T, CursorUrlPaginationResult<T, TKey>>
         where T : class
         where TKey : IComparable
     {
@@ -48,7 +48,7 @@ namespace CorePagination.Tranformation.Transformers
         /// including the cursor and size information.</param>
         /// <returns>A <see cref="CursorUrlPaginationResult{T, TKey}"/> that includes navigational URLs for cursor-based pagination.</returns>
         /// <exception cref="ArgumentNullException">Thrown if either the paginationResult or parameters is null.</exception>
-        public CursorUrlPaginationResult<T, TKey> Transform(IPaginationResult<T> paginationResult)
+        public override CursorUrlPaginationResult<T, TKey> Transform(IPaginationResult<T> paginationResult)
         {
             Guard.NotNull(paginationResult, nameof(paginationResult));
 
