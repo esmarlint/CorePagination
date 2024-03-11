@@ -15,6 +15,8 @@ namespace CorePagination.Tranformation.Transformers
     public class SimpleUrlResultTransformer<T> : IPaginationTranformer<T, UrlPaginationResult<T>> where T : class
     {
         private readonly string _baseUrl;
+        private readonly Dictionary<string, string> _parametersToInclude = new Dictionary<string, string>();
+        private readonly Dictionary<string, string> _parameterRenames = new Dictionary<string, string>();
 
         /// <summary>
         /// Initializes a new instance of the <see cref="SimpleUrlResultTransformer{T}"/> class using the specified base URL for link generation.
@@ -44,25 +46,61 @@ namespace CorePagination.Tranformation.Transformers
             var hasNextPage = paginationResult.Items.Count() == pageSize;
             var hasPrevPage = currentPage > 1;
 
-            string CreateUrl(string route) => string.IsNullOrEmpty(_baseUrl) ? route : $"{_baseUrl}{route}";
-
-            string BuildQueryString(int page)
+            var baseQueryString = _parametersToInclude.Select(kv =>
             {
-                var queryString = $"?page={page}&pageSize={pageSize}";
-                return queryString;
-            }
+                string value = kv.Key switch
+                {
+                    "page" => currentPage.ToString(),
+                    "pageSize" => pageSize.ToString(),
+                    _ => kv.Value
+                };
+                return $"{_parameterRenames.GetValueOrDefault(kv.Key, kv.Key)}={value}";
+            }).ToList();
+
+            string BuildUrl(int page) => $"{_baseUrl}?{string.Join("&", baseQueryString)}".Replace($"page={currentPage}", $"page={page}");
 
             return new UrlPaginationResult<T>
             {
                 Items = paginationResult.Items,
                 PageSize = pageSize,
                 Page = currentPage,
-                FirstPageUrl = CreateUrl(BuildQueryString(1)),
-                PreviousUrl = hasPrevPage ? CreateUrl(BuildQueryString(currentPage - 1)) : null,
-                CurrentUrl = CreateUrl(BuildQueryString(currentPage)),
-                NextUrl = hasNextPage ? CreateUrl(BuildQueryString(currentPage + 1)) : null
+                TotalItems = paginationResult.TotalItems,
+                FirstPageUrl = BuildUrl(1),
+                PreviousUrl = hasPrevPage ? BuildUrl(currentPage - 1) : null,
+                CurrentUrl = BuildUrl(currentPage),
+                NextUrl = hasNextPage ? BuildUrl(currentPage + 1) : null
             };
         }
+
+
+        public SimpleUrlResultTransformer<T> IncludePage()
+        {
+            _parametersToInclude["page"] = "page";
+            return this;
+        }
+
+        public SimpleUrlResultTransformer<T> IncludePageSize()
+        {
+            _parametersToInclude["pageSize"] = "pageSize";
+            return this;
+        }
+
+        public SimpleUrlResultTransformer<T> RenameParameter(string originalName, string newName)
+        {
+            if (_parametersToInclude.ContainsKey(originalName))
+            {
+                _parameterRenames[originalName] = newName;
+            }
+
+            return this;
+        }
+
+        public SimpleUrlResultTransformer<T> AddParameter(string name, string value)
+        {
+            _parametersToInclude[name] = value;
+            return this;
+        }
+
     }
 
 }
