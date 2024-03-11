@@ -21,11 +21,12 @@ namespace CorePagination.Tranformation.Transformers
         /// </summary>
         /// <param name="baseUrl">The base URL to be used for generating navigational links. This URL should not include pagination query parameters.</param>
         /// <exception cref="ArgumentNullException">Thrown if the baseUrl is null or empty.</exception>
-        public SimpleUrlResultTransformer(string baseUrl)
+        public SimpleUrlResultTransformer(string baseUrl = "")
         {
-            Guard.NotNull(baseUrl, nameof(baseUrl));
             _baseUrl = baseUrl;
         }
+
+        protected string CreateUrl(string route) => string.IsNullOrEmpty(_baseUrl) ? route : $"{_baseUrl}{route}";
 
         /// <summary>
         /// Transforms the given pagination result into a <see cref="UrlPaginationResult{T}"/>, 
@@ -39,17 +40,27 @@ namespace CorePagination.Tranformation.Transformers
             Guard.NotNull(paginationResult, nameof(paginationResult));
 
             var currentPage = paginationResult.Page;
-            var hasNextPage = true;
+            var pageSize = paginationResult.PageSize;
+            var hasNextPage = paginationResult.Items.Count() == pageSize;
             var hasPrevPage = currentPage > 1;
+
+            string CreateUrl(string route) => string.IsNullOrEmpty(_baseUrl) ? route : $"{_baseUrl}{route}";
+
+            string BuildQueryString(int page)
+            {
+                var queryString = $"?page={page}&pageSize={pageSize}";
+                return queryString;
+            }
 
             return new UrlPaginationResult<T>
             {
                 Items = paginationResult.Items,
-                PageSize = paginationResult.PageSize,
-                FirstPageUrl = $"{_baseUrl}?page=1",
-                NextUrl = hasNextPage ? $"{_baseUrl}?page={currentPage + 1}" : null,
-                PreviusUrl = hasPrevPage ? $"{_baseUrl}?page={currentPage - 1}" : null,
-                CurrentUrl = $"{_baseUrl}?page={currentPage}"
+                PageSize = pageSize,
+                Page = currentPage,
+                FirstPageUrl = CreateUrl(BuildQueryString(1)),
+                PreviousUrl = hasPrevPage ? CreateUrl(BuildQueryString(currentPage - 1)) : null,
+                CurrentUrl = CreateUrl(BuildQueryString(currentPage)),
+                NextUrl = hasNextPage ? CreateUrl(BuildQueryString(currentPage + 1)) : null
             };
         }
     }
