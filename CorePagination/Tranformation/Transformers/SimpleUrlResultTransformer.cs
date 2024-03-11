@@ -70,7 +70,7 @@ namespace CorePagination.Tranformation.Transformers
             };
         }
 
-        protected string CreateUrl(string route) => string.IsNullOrEmpty(_baseUrl) ? route : $"{_baseUrl}{route}";
+        private string CreateUrl(string route) => string.IsNullOrEmpty(_baseUrl) ? route : $"{_baseUrl}{route}";
 
         #region Fluent API
 
