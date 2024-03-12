@@ -95,12 +95,20 @@ namespace CorePagination.Tranformation.Transformers
         }
 
         #region Fluent API
+        /// <summary>
+        /// Configures the transformer to include the current cursor value in the pagination results.
+        /// </summary>
+        /// <returns>The instance of <see cref="CursorUrlResultTransformer{T, TKey}"/> for further configuration.</returns>
         public CursorUrlResultTranformer<T, TKey> IncludeCurrentCursor()
         {
             _includeCurrentCursor = true;
             return this;
         }
 
+        /// <summary>
+        /// Configures the transformer to include the next cursor value, facilitating forward navigation in the pagination results.
+        /// </summary>
+        /// <returns>The instance of <see cref="CursorUrlResultTransformer{T, TKey}"/> for further configuration.</returns>
         public CursorUrlResultTranformer<T, TKey> IncludeNextCursor()
         {
             _includeNextCursor = true;

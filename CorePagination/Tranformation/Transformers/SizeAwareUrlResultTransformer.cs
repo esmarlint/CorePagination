@@ -81,12 +81,20 @@ namespace CorePagination.Tranformation.Transformers
         }
 
         #region Fluent API
+        /// <summary>
+        /// Configures the transformer to include the total count of items in the pagination results.
+        /// </summary>
+        /// <returns>The instance of <see cref="SizeAwareUrlResultTransformer{T}"/> for further configuration.</returns>
         public SizeAwareUrlResultTransformer<T> IncludeTotalItems()
         {
             _includeTotalItems = true;
             return this;
         }
 
+        /// <summary>
+        /// Configures the transformer to include the total number of pages in the pagination results.
+        /// </summary>
+        /// <returns>The instance of <see cref="SizeAwareUrlResultTransformer{T}"/> for further configuration.</returns>
         public SizeAwareUrlResultTransformer<T> IncludeTotalPages()
         {
             _includeTotalPages = true;
