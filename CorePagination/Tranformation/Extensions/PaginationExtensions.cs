@@ -27,6 +27,14 @@ namespace CorePagination.Tranformation.Extensions
             return transformer.Transform(paginationResult);
         }
 
+        /// <summary>
+        /// Applies a URL transformation to the pagination result using the CursorUrlResultTransformer.
+        /// </summary>
+        /// <param name="paginationResult">The pagination result to transform.</param>
+        /// <param name="baseUrl">The base URL to be used for generating navigational links.</param>
+        /// <returns>A CursorUrlPaginationResult with the transformed URLs included.</returns>
+        /// <typeparam name="T">The type of the elements in the pagination result.</typeparam>
+        /// <typeparam name="TKey">The type of the key used for cursor pagination, which must be comparable.</typeparam>
         public static CursorUrlPaginationResult<T, TKey> WithUrl<T, TKey>(
             this IPaginationResult<T> paginationResult, string baseUrl)
             where T : class
