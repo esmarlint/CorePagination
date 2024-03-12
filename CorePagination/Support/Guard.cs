@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace CorePagination.Support
 {
-    public static class Guard
+    internal static class Guard
     {
         public static void NotNull(object input, string parameterName = null)
         {
