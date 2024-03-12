@@ -31,12 +31,13 @@ namespace CorePagination.Tranformation.Transformers
         }
 
         /// <summary>
-        /// Transforms a given pagination result into a URL-enhanced pagination result.
-        /// This transformer is particularly useful for adding navigation links to API responses.
+        /// Transforms the specified pagination result into a <see cref="UrlPaginationResult{T}"/>
+        /// by appending URL navigation links that include pagination details like page number and size.
+        /// When configured, it can also include total items and total pages information.
         /// </summary>
         /// <param name="paginationResult">The pagination result to transform.</param>
-        /// <returns>A <see cref="UrlPaginationResult{T}"/> that includes navigational URLs based on the current pagination state.</returns>
-        /// <exception cref="ArgumentNullException">Thrown when the input pagination result is null.</exception>
+        /// <returns>A <see cref="UrlPaginationResult{T}"/> enhanced with navigational URLs.</returns>
+        /// <exception cref="ArgumentNullException">Thrown when the pagination result is null.</exception>
         public override UrlPaginationResult<T> Transform(IPaginationResult<T> paginationResult)
         {
             Guard.NotNull(paginationResult, nameof(paginationResult));

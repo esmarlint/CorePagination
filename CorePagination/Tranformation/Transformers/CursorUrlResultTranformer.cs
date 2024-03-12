@@ -43,14 +43,13 @@ namespace CorePagination.Tranformation.Transformers
         }
 
         /// <summary>
-        /// Transforms the specified cursor-based pagination result into a <see cref="CursorUrlPaginationResult{T, TKey}"/>,
-        /// appending navigation URLs based on the cursor values.
+        /// Transforms the given pagination result into a <see cref="CursorUrlPaginationResult{T, TKey}"/>
+        /// by appending navigation links appropriate for cursor-based pagination.
         /// </summary>
         /// <param name="paginationResult">The pagination result to transform.</param>
-        /// <param name="parameters">The pagination parameters used to generate the original result, 
-        /// including the cursor and size information.</param>
-        /// <returns>A <see cref="CursorUrlPaginationResult{T, TKey}"/> that includes navigational URLs for cursor-based pagination.</returns>
-        /// <exception cref="ArgumentNullException">Thrown if either the paginationResult or parameters is null.</exception>
+        /// <returns>A <see cref="CursorUrlPaginationResult{T, TKey}"/> that includes cursor-based navigational URLs.</returns>
+        /// <exception cref="ArgumentNullException">Thrown when the pagination result is null.</exception>
+        /// <exception cref="ArgumentException">Thrown when the pagination result is not compatible with cursor-based pagination.</exception>
         public override CursorUrlPaginationResult<T, TKey> Transform(IPaginationResult<T> paginationResult)
         {
             Guard.NotNull(paginationResult, nameof(paginationResult));
