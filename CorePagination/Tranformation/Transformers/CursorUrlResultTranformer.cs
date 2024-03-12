@@ -27,6 +27,9 @@ namespace CorePagination.Tranformation.Transformers
         where TKey : IComparable
     {
         private readonly string _baseUrl;
+        private bool _includeCurrentCursor;
+        private bool _includeNextCursor;
+        private bool _includeDirection;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="CursorUrlResultTransformer{T, TKey}"/> class using the specified base URL for link generation.
@@ -52,21 +55,60 @@ namespace CorePagination.Tranformation.Transformers
         {
             Guard.NotNull(paginationResult, nameof(paginationResult));
 
-            var cursorResult = paginationResult as CursorPaginationResult<T, TKey>;
-            if (cursorResult == null) throw new InvalidOperationException("The pagination result is not a cursor pagination result.");
+            var cursorPaginationResult = paginationResult as CursorUrlPaginationResult<T, TKey>;
+            if (cursorPaginationResult == null)
+            {
+                throw new ArgumentException("The pagination result is not a cursor pagination result.", nameof(paginationResult));
+            }
 
-            var nextCursor = cursorResult.NextCursor;
+            var queryParams = new List<string>
+            {
+                $"pageSize={cursorPaginationResult.PageSize}"
+            };
+
+            if (_includeCurrentCursor && cursorPaginationResult.CurrentCursor != null)
+            {
+                queryParams.Add($"currentCursor={cursorPaginationResult.CurrentCursor}");
+            }
+
+            if (_includeNextCursor && cursorPaginationResult.NextCursor != null)
+            {
+                queryParams.Add($"nextCursor={cursorPaginationResult.NextCursor}");
+            }
+
+            if (_includeDirection)
+            {
+                var direction = cursorPaginationResult.CurrentCursor ;
+                queryParams.Add($"direction={direction}");
+            }
+
+            var queryString = string.Join("&", queryParams);
+            var baseUrlWithParams = $"{_baseUrl}?{queryString}";
 
             return new CursorUrlPaginationResult<T, TKey>
             {
-                Items = cursorResult.Items,
-                PageSize = cursorResult.PageSize,
-                CurrentCursor = cursorResult.CurrentCursor,
-                NextCursor = nextCursor,
-                NextPageUrl = nextCursor != null ? $"{_baseUrl}?cursor={nextCursor}&pageSize={cursorResult.PageSize}" : null,
-                CurrentUrl = $"{_baseUrl}?cursor={cursorResult.CurrentCursor}&pageSize={cursorResult.PageSize}"
+                Items = cursorPaginationResult.Items,
+                PageSize = cursorPaginationResult.PageSize,
+                CurrentCursor = cursorPaginationResult.CurrentCursor,
+                NextCursor = cursorPaginationResult.NextCursor,
+                CurrentUrl = baseUrlWithParams
             };
         }
+
+        #region Fluent API
+        public CursorUrlResultTranformer<T, TKey> IncludeCurrentCursor()
+        {
+            _includeCurrentCursor = true;
+            return this;
+        }
+
+        public CursorUrlResultTranformer<T, TKey> IncludeNextCursor()
+        {
+            _includeNextCursor = true;
+            return this;
+        }
+
+        #endregion
     }
 
 }
