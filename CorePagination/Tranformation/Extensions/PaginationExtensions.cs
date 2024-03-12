@@ -13,6 +13,13 @@ namespace CorePagination.Tranformation.Extensions
             return transformer.Transform(paginationResult);
         }
 
+        /// <summary>
+        /// Applies a URL transformation to the pagination result using the SizeAwareUrlResultTransformer.
+        /// </summary>
+        /// <param name="paginationResult">The pagination result to transform.</param>
+        /// <param name="baseUrl">The base URL to be used for generating navigational links.</param>
+        /// <returns>A UrlPaginationResult with the transformed URLs included.</returns>
+        /// <typeparam name="T">The type of the elements in the pagination result.</typeparam>
         public static UrlPaginationResult<T> WithUrl<T>(this IPaginationResult<T> paginationResult, string baseUrl)
             where T : class
         {
