@@ -5,11 +5,8 @@ using CorePagination.Tranformation.Transformers;
 namespace CorePagination.Tranformation.Extensions
 {
     /// <summary>
-    /// Applies a URL transformation using the appropriate transformer based on the type of pagination result.
+    /// Provides extension methods for applying URL transformations to pagination results.
     /// </summary>
-    /// <param name="paginationResult">The pagination result to transform.</param>
-    /// <param name="baseUrl">The base URL to use for generating navigation links.</param>
-    /// <returns>The transformed pagination result with enhanced navigational URLs.</returns>
     public static class PaginationExtensions
     {
         public static UrlPaginationResult<T> WithSimpleUrl<T>(this IPaginationResult<T> paginationResult, string baseUrl)
