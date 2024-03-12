@@ -5,6 +5,13 @@ using CorePagination.Tranformation.Contracts;
 
 namespace CorePagination.Tranformation.Transformers
 {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="SizeAwareUrlResultTransformer{T}"/> class.
+    /// Sets up the transformer with the base URL for generating navigation links.
+    /// </summary>
+    /// <param name="baseUrl">The base URL used for appending navigation links to the pagination results.</param>
+    /// <exception cref="ArgumentNullException">Thrown when the baseUrl is null or empty.</exception>
+
     public class SizeAwareUrlResultTransformer<T> : UrlResultTransformerBase<T, UrlPaginationResult<T>> where T : class
     {
         private readonly string _baseUrl;
