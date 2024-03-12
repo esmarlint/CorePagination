@@ -8,6 +8,8 @@ namespace CorePagination.Tranformation.Transformers
     public class SizeAwareUrlResultTransformer<T> : UrlResultTransformerBase<T, UrlPaginationResult<T>> where T : class
     {
         private readonly string _baseUrl;
+        private bool _includeTotalItems;
+        private bool _includeTotalPages;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="SizeAwareUrlResultTransformer{T}"/> class.
@@ -37,8 +39,24 @@ namespace CorePagination.Tranformation.Transformers
             var pageSize = paginationResult.PageSize;
             var totalPages = (int)Math.Ceiling((double)totalItems / pageSize);
 
-            var hasNextPage = currentPage < totalPages;
-            var hasPrevPage = currentPage > 1;
+            var queryParams = new List<string>
+            {
+                $"page={currentPage}",
+                $"pageSize={pageSize}"
+            };
+
+            if (_includeTotalItems)
+            {
+                queryParams.Add($"totalItems={totalItems}");
+            }
+
+            if (_includeTotalPages)
+            {
+                queryParams.Add($"totalPages={totalPages}");
+            }
+
+            var queryString = string.Join("&", queryParams);
+            var baseUrlWithParams = $"{_baseUrl}?{queryString}";
 
             return new UrlPaginationResult<T>
             {
@@ -46,13 +64,28 @@ namespace CorePagination.Tranformation.Transformers
                 PageSize = pageSize,
                 Page = currentPage,
                 TotalItems = totalItems,
-                FirstPageUrl = $"{_baseUrl}?page=1",
-                LastPageUrl = $"{_baseUrl}?page={totalPages}",
-                NextPageUrl = hasNextPage ? $"{_baseUrl}?page={currentPage + 1}" : null,
-                PreviousPageUrl = hasPrevPage ? $"{_baseUrl}?page={currentPage - 1}" : null,
-                CurrentUrl = $"{_baseUrl}?page={currentPage}",
+                FirstPageUrl = $"{baseUrlWithParams}&page=1",
+                LastPageUrl = $"{baseUrlWithParams}&page={totalPages}",
+                NextPageUrl = currentPage < totalPages ? $"{baseUrlWithParams}&page={currentPage + 1}" : null,
+                PreviousPageUrl = currentPage > 1 ? $"{baseUrlWithParams}&page={currentPage - 1}" : null,
+                CurrentUrl = baseUrlWithParams,
             };
         }
+
+        #region Fluent API
+        public SizeAwareUrlResultTransformer<T> IncludeTotalItems()
+        {
+            _includeTotalItems = true;
+            return this;
+        }
+
+        public SizeAwareUrlResultTransformer<T> IncludeTotalPages()
+        {
+            _includeTotalPages = true;
+            return this;
+        }
+        #endregion
+
     }
 
 }
