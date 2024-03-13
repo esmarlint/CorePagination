@@ -1,5 +1,11 @@
 ﻿namespace CorePagination.Contracts
 {
+    /// <summary>
+    /// Defines the contract for pagination operations.
+    /// </summary>
+    /// <typeparam name="T">The type of the elements to be paginated.</typeparam>
+    /// <typeparam name="TParameters">The type of the pagination parameters.</typeparam>
+    /// <typeparam name="TResult">The type of the pagination result.</typeparam>
     public interface IPagination<T, TParameters, TResult>
     {
         /// <summary>
