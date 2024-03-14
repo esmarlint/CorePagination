@@ -38,10 +38,54 @@ CorePagination is a lightweight and easy-to-use pagination library designed spec
 - **Support for Pagination URLs**: Generates URLs for page navigation, ideal for REST APIs.
 - **Asynchronous by Nature**: Designed for asynchronous operations, leveraging EF Core capabilities.
 
-## Requirements
+## Installation Guide
 
-- .NET Core 3.1 or higher
-- Entity Framework Core 3.1 or higher
+To get started with CorePagination, you can easily install it using NuGet package manager. This guide assumes you have a working .NET environment set up.
+
+### Prerequisites
+
+- .NET Core 3.1 SDK or later.
+- An existing .NET project or the ability to create a new one.
+
+### Installing via NuGet
+
+1. **Package Manager Console**
+
+   Open the Package Manager Console within your Visual Studio and run the following command:
+
+   ```sh
+   Install-Package CorePagination
+   ```
+
+   This command will add the CorePagination package to your project.
+
+2. **.NET CLI**
+
+   If you prefer using the command line or you are working outside of Visual Studio, you can use the .NET CLI to install the package. Run the following command in your terminal:
+
+   ```sh
+   dotnet add package CorePagination
+   ```
+
+3. **Visual Studio NuGet Manager**
+
+   - In Visual Studio, right-click on your project in the Solution Explorer and select "Manage NuGet Packages".
+   - Navigate to the "Browse" tab and search for "CorePagination".
+   - Click on the CorePagination package, select the version you wish to install, and press "Install".
+
+### Verifying Installation
+
+After installation, you can verify that CorePagination is correctly added to your project by checking the project's dependencies. In Visual Studio, you should see CorePagination listed under the NuGet node in the Solution Explorer.
+
+### Next Steps
+
+Once CorePagination is installed, you can start using it in your project by including the relevant namespaces in your files. For example:
+
+```csharp
+using CorePagination.Extensions;
+```
+
+Refer to the usage examples in this documentation to begin implementing pagination in your application.
 
 # CorePagination Usage Examples
 
