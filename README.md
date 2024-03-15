@@ -467,7 +467,18 @@ By leveraging the URL transformation extensions and customizing the transformers
 
 ## Upcoming Changes
 
-🎉 **Version 0.2.1 Released**: CorePagination version 0.2.1 is now available on NuGet! This release includes various improvements and bug fixes to enhance the library's functionality and reliability.
+🎉 **Version 0.5.0 Released**: CorePagination version 0.5.0 is now available on NuGet! This release includes various improvements and bug fixes to enhance the library's functionality and reliability.
+
+### Changelog
+
+#### Version 0.5.0
+
+##### Improvements
+
+- Enhanced internal XML documentation for improved code maintainability and understanding.
+- Added URL Transformation Extensions to provide easy integration of navigational links in pagination results.
+- Improved overall documentation, including updates to the introduction, usage examples, and feature explanations.
+- Refactored code for better type safety and encapsulation, such as marking internal classes (e.g., Guards) as `internal` to prevent unintended public access.
 
 ## Roadmap to Version 1.0
 
@@ -496,6 +507,7 @@ Contributions are highly welcome and appreciated! If you'd like to contribute to
 - Benchmarks: Provide performance benchmarks to demonstrate the efficiency of CorePagination.
 - Documentation: Improve the documentation by fixing typos, clarifying explanations, or adding more examples.
 - Bug Fixes and Enhancements: If you encounter any issues or have ideas for improvements, please submit a pull request or open an issue on our GitHub repository.
+- Introduction of state management in `PaginationResult` to enhance functionality and flexibility.
 
 ## License
 
