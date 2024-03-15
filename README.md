@@ -6,9 +6,12 @@ CorePagination is a lightweight and easy-to-use pagination library designed spec
 
 ## Table of Contents
 
+## Table of Contents
+
 - [Introduction](#introduction)
 - [Features](#features)
 - [Requirements](#requirements)
+- [Installation Guide](#installation-guide)
 - [CorePagination Usage Examples](#corepagination-usage-examples)
   - [Using `PaginateAsync`](#using-paginateasync)
   - [Using `SimplePaginateAsync`](#using-simplepaginateasync)
@@ -25,10 +28,15 @@ CorePagination is a lightweight and easy-to-use pagination library designed spec
   - [Using Inline Transformations](#using-inline-transformations)
   - [Creating and Using Your Own Transformers](#creating-and-using-your-own-transformers)
   - [Example with Custom Transformer for Summary Data](#example-with-custom-transformer-for-summary-data)
+- [URL Transformation Extensions](#url-transformation-extensions)
+  - [Overview](#overview)
+  - [Using URL Transformations](#using-url-transformations)
+  - [Available Extensions](#available-extensions)
+  - [Customizing URL Transformations](#customizing-url-transformations)
 - [Upcoming Changes](#upcoming-changes)
-- [Roadmap to Version 1.0](#roadmap-to-version-10)
 - [Contributing](#contributing)
 - [License](#license)
+
 
 ## Features
 
