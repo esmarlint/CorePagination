@@ -10,7 +10,6 @@ CorePagination is a lightweight and easy-to-use pagination library designed spec
 
 - [Introduction](#introduction)
 - [Features](#features)
-- [Requirements](#requirements)
 - [Installation Guide](#installation-guide)
 - [CorePagination Usage Examples](#corepagination-usage-examples)
   - [Using `PaginateAsync`](#using-paginateasync)
@@ -34,6 +33,7 @@ CorePagination is a lightweight and easy-to-use pagination library designed spec
   - [Available Extensions](#available-extensions)
   - [Customizing URL Transformations](#customizing-url-transformations)
 - [Upcoming Changes](#upcoming-changes)
+  - [Roadmap to Version 1.0](#roadmap-to-version-10)
 - [Contributing](#contributing)
 - [License](#license)
 
