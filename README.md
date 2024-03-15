@@ -2,15 +2,23 @@
 
 # CorePagination
 
-CorePagination is a lightweight and easy-to-use pagination library designed specifically for Entity Framework Core (EF Core). It offers a straightforward and extensible way to add pagination functionality to your .NET projects, improving efficiency and management of large datasets. By leveraging CorePagination, developers can avoid the complexity of creating custom pagination logic from scratch, benefiting from pre-built methods that are optimized for performance and flexibility. Additionally, the library's support for transformers, like the `UrlResultTransformer`, provides out-of-the-box solutions for common pagination challenges, such as generating navigation URLs, thereby saving development time and enhancing user experience. This makes CorePagination an ideal choice for projects that require reliable, scalable, and easy-to-implement pagination solutions.
+CorePagination is a **lightweight and easy-to-use** pagination library designed specifically for **Entity Framework Core (EF Core)**. It offers a **straightforward and extensible** way to add pagination functionality to your **.NET projects**, improving efficiency and management of large datasets. 📊💪
 
-## Table of Contents
+With CorePagination, developers can avoid the complexity of creating custom pagination logic from scratch, benefiting from **pre-built and optimized methods**. The library's support for transformers, like `UrlResultTransformer`, provides out-of-the-box solutions for common pagination challenges. 🚀🔗
+
+**Current Status:**
+
+- ✅ Stable version available on NuGet (in progress)
+- 🚧 Documentation in progress
+- 🌐 Examples and tutorials under development
+- 🔧 Continuous improvements based on community feedback
+
+Simplify your pagination implementation with CorePagination today! 🎉
 
 ## Table of Contents
 
 - [Introduction](#introduction)
 - [Features](#features)
-- [Requirements](#requirements)
 - [Installation Guide](#installation-guide)
 - [CorePagination Usage Examples](#corepagination-usage-examples)
   - [Using `PaginateAsync`](#using-paginateasync)
@@ -34,9 +42,9 @@ CorePagination is a lightweight and easy-to-use pagination library designed spec
   - [Available Extensions](#available-extensions)
   - [Customizing URL Transformations](#customizing-url-transformations)
 - [Upcoming Changes](#upcoming-changes)
+  - [Roadmap to Version 1.0](#roadmap-to-version-10)
 - [Contributing](#contributing)
 - [License](#license)
-
 
 ## Features
 
@@ -393,6 +401,69 @@ int pageSize = 10;
 var paginationResult = await products.PaginateAsync(pageNumber, pageSize);
 var summaryResult = paginationResult.Transform(new ProductSummaryTransformer());
 ```
+
+## URL Transformation Extensions
+
+### Overview
+
+CorePagination provides URL transformation extensions that allow you to easily enhance your pagination results with navigational links. These extensions are particularly useful when building web APIs, as they enable clients to navigate through paginated data effortlessly.
+
+The URL transformation extensions in CorePagination offer the following benefits:
+
+- **Improved User Experience**: By including navigational links in the pagination results, clients can easily navigate to the next, previous, first, or last page of data, enhancing the overall user experience.
+
+- **Simplified Client-Side Logic**: With the navigational links readily available in the pagination results, clients no longer need to construct the URLs for pagination navigation themselves, simplifying the client-side logic.
+
+- **Flexibility and Customization**: CorePagination provides different types of URL transformers that cater to various pagination scenarios. You can choose the transformer that best fits your needs and customize the generated URLs to match your API's structure.
+
+### Using URL Transformations
+
+To apply URL transformations to your pagination results, you can use the extension methods provided by CorePagination. Here's an example of how to use the `WithUrl` extension method directly on the pagination result:
+
+```csharp
+var urlPaginationResult = await products.PaginateAsync(pageNumber, pageSize)
+                                         .WithUrl("/products")
+                                         .IncludeTotalItems()
+                                         .IncludeTotalPages()
+                                         .IncludePageSize()
+                                         .RenameParameter("page", "p");
+```
+
+In this example, the `WithUrl` extension method is called directly on the result of `PaginateAsync`, passing in the base path for the generated links. The extension method returns a new `UrlPaginationResult<T>` object that includes the navigational URLs. Additional configuration options, such as including total items, total pages, page size, and renaming parameters, are chained using the fluent API.
+
+### Available Extensions
+
+CorePagination provides the following URL transformation extensions:
+
+- `WithSimpleUrl`: Generates basic navigational links, including URLs for the next and previous pages.
+- `WithUrl`: Generates comprehensive navigational links, including URLs for the first, last, next, and previous pages, as well as the current page.
+- `WithUrl` (for cursor-based pagination): Generates navigational links specific to cursor-based pagination, including the current URL and the URL for the next page.
+
+### Customizing URL Transformations
+
+CorePagination allows you to customize the generated URLs by configuring the URL transformers using the fluent API. Here are a few examples:
+
+#### Example with relative path
+
+```csharp
+var urlPaginationResult = await products.PaginateAsync(pageNumber, pageSize)
+                                         .WithUrl("/products");
+```
+
+In this example, instead of providing a complete base URL, only the relative path `/products` is provided. This is useful when you want to generate relative links instead of absolute URLs. CorePagination will handle the generation of pagination links using the provided path.
+
+#### Example with cursor-based pagination
+
+```csharp
+var urlPaginationResult = await products.CursorPaginateAsync(p => p.Id, pageSize, currentCursor)
+                                         .WithUrl("/products")
+                                         .IncludeCurrentCursor()
+                                         .IncludeNextCursor();
+```
+
+In this example, cursor-based pagination is used with the `CursorPaginateAsync` method. The `WithUrl` extension method is then applied directly on the pagination result, providing only the relative path `/products`. Additional options, such as including the current and next cursor values, are configured using the fluent API.
+
+By leveraging the URL transformation extensions and customizing the transformers using the fluent API, you can easily enhance your pagination results with navigational links that fit your API's requirements and improve the overall developer experience.
 
 ## Upcoming Changes
 
