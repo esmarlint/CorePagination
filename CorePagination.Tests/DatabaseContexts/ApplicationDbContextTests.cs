@@ -15,6 +15,6 @@ namespace CorePagination.Tests.DatabaseContexts
         {
         }
 
-        public DbSet<ProductTets> Products { get; set; }
+        public DbSet<ProductTests> Products { get; set; }
     }
 }

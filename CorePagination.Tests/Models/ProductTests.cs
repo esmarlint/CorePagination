@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace CorePagination.Tests.Models
 {
-    public class ProductTets
+    public class ProductTests
     {
         public int Id { get; set; }
         public string Name { get; set; }
