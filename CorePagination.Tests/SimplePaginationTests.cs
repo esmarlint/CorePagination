@@ -2,7 +2,9 @@
 using Xunit;
 using Microsoft.EntityFrameworkCore;
 using CorePagination.Tests.DatabaseContexts;
-using CorePagination;
+using CorePagination.Extensions;
+
+namespace CorePagination.Tests;
 
 public class PaginationTests
 {
@@ -25,4 +27,17 @@ public class PaginationTests
         }
     }
 
+    [Fact]
+    public void TestSimplePaginate_ReturnsExpectedResults()
+    {
+        using var context = new ApplicationDbContext(_options);
+
+        var pageNumber = 1;
+        var pageSize = 10;
+        var paginatedProducts = context.Products.SimplePaginate(pageNumber, pageSize);
+
+        Assert.Equal(pageSize, paginatedProducts.Items.Count());
+        Assert.Equal("Product 1", paginatedProducts.Items.First().Name);
+        Assert.Equal("Product 10", paginatedProducts.Items.Last().Name);
+    }
 }
