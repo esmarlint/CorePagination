@@ -3,6 +3,7 @@ using Xunit;
 using Microsoft.EntityFrameworkCore;
 using CorePagination.Tests.DatabaseContexts;
 using CorePagination.Extensions;
+using CorePagination.Tests.Models;
 
 namespace CorePagination.Tests;
 
@@ -21,7 +22,7 @@ public class PaginationTests
         {
             for (int i = 1; i <= 50; i++)
             {
-                context.Products.Add(new CorePagination.Tests.Models.ProductTests { Id = i, Name = $"Product {i}" });
+                context.Products.Add(new ProductTests { Id = i, Name = $"Product {i}" });
             }
             context.SaveChanges();
         }
