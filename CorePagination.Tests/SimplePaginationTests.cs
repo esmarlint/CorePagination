@@ -41,4 +41,33 @@ public class PaginationTests
         Assert.Equal("Product 1", paginatedProducts.Items.First().Name);
         Assert.Equal("Product 10", paginatedProducts.Items.Last().Name);
     }
+
+    [Fact]
+    public void TestSimplePaginate_ReturnsFirstPageCorrectly()
+    {
+        using var context = new ApplicationDbContext(_options);
+
+        var pageNumber = 1;
+        var pageSize = 10;
+
+        var paginatedProducts = context.Products.SimplePaginate(pageNumber, pageSize);
+
+        Assert.NotEmpty(paginatedProducts.Items);
+        Assert.Equal(pageSize, paginatedProducts.Items.Count());
+        Assert.Equal(1, paginatedProducts.Items.First().Id);
+    }
+
+    [Fact]
+    public void TestSimplePaginate_HandlesPartialPageCorrectly()
+    {
+        using var context = new ApplicationDbContext(_options);
+
+        var pageNumber = 4; 
+        var pageSize = 10;
+
+        var paginatedProducts = context.Products.SimplePaginate(pageNumber, pageSize);
+
+        Assert.NotEmpty(paginatedProducts.Items);
+        Assert.Equal(5, paginatedProducts.Items.Count()); 
+    }
 }
