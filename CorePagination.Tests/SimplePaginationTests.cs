@@ -14,13 +14,13 @@ public class PaginationTests
     public PaginationTests()
     {
         _options = new DbContextOptionsBuilder<ApplicationDbContext>()
-            .UseInMemoryDatabase(databaseName: "TestDatabase")
+            .UseInMemoryDatabase(databaseName: "ExtendedTestDatabaseForSimplePagination")
             .Options;
 
         using var context = new ApplicationDbContext(_options);
         if (!context.Products.Any())
         {
-            for (int i = 1; i <= 50; i++)
+            for (int i = 1; i <= 35; i++) 
             {
                 context.Products.Add(new ProductTests { Id = i, Name = $"Product {i}" });
             }
