@@ -70,4 +70,20 @@ public class PaginationTests
         Assert.NotEmpty(paginatedProducts.Items);
         Assert.Equal(5, paginatedProducts.Items.Count()); 
     }
+
+    [Theory]
+    [InlineData(0)]
+    [InlineData(-1)]
+    public void TestSimplePaginate_WithInvalidPageNumber(int pageNumber)
+    {
+        using var context = new ApplicationDbContext(_options);
+        var pageSize = 10;
+
+        var paginatedProducts = context.Products.SimplePaginate(pageNumber, pageSize);
+
+        Assert.NotEmpty(paginatedProducts.Items);
+        Assert.Equal(pageSize, paginatedProducts.Items.Count());
+        Assert.Equal(1, paginatedProducts.Items.First().Id); 
+    }
+
 }
