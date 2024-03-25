@@ -79,4 +79,26 @@ public class SimplePaginatorTests
         // Act & Assert
         await Assert.ThrowsAsync<ArgumentNullException>(() => paginator.PaginateAsync(null, parameters));
     }
+
+    [Fact]
+    public async Task SimplePaginator_Paginate_ReturnsFirstPage_WhenPageIsZero()
+    {
+        // Arrange
+        var options = CreateInMemoryDatabaseOptions();
+        using var context = new FakeDbContext(options);
+        SeedTestData(context);
+
+        var paginator = new SimplePaginator<Product>();
+        var parameters = new PaginatorParameters { Page = 0, PageSize = 5 };
+
+        // Act
+        var result = await paginator.PaginateAsync(context.Products, parameters);
+
+        // Assert
+        Assert.Equal(5, result.Items.Count());
+        Assert.Equal(1, result.Page);
+        Assert.Equal(5, result.PageSize);
+        Assert.Equal(1, result.Items.First().Id);
+        Assert.Equal(5, result.Items.Last().Id);
+    }
 }
