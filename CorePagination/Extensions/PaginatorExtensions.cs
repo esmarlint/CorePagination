@@ -29,6 +29,8 @@ namespace CorePagination.Extensions
         public static PaginationResult<T> SimplePaginate<T>(this IQueryable<T> query, int pageNumber, int pageSize)
         {
             Guard.NotNull(query, nameof(query));
+            Guard.GreaterThanZero(pageNumber, nameof(pageNumber));
+
 
             var items = query.Skip((pageNumber - 1) * pageSize).Take(pageSize).ToList();
             return new PaginationResult<T>
@@ -53,6 +55,8 @@ namespace CorePagination.Extensions
         public static SizeAwarePaginationResult<T> Paginate<T>(this IQueryable<T> query, int pageNumber, int pageSize)
         {
             Guard.NotNull(query, nameof(query));
+            Guard.GreaterThanZero(pageNumber, nameof(pageNumber));
+
 
             var totalItems = query.Count();
             var totalPages = (int)Math.Ceiling(totalItems / (double)pageSize);
@@ -107,6 +111,8 @@ namespace CorePagination.Extensions
             this IQueryable<T> query, int pageNumber, int pageSize)
         {
             Guard.NotNull(query, nameof(query));
+            Guard.GreaterThanZero(pageNumber, nameof(pageNumber));
+
 
             var items = await query.Skip((pageNumber - 1) * pageSize).Take(pageSize).ToListAsync();
             return new PaginationResult<T>
@@ -132,6 +138,8 @@ namespace CorePagination.Extensions
             this IQueryable<T> query, int pageNumber, int pageSize)
         {
             Guard.NotNull(query, nameof(query));
+            Guard.GreaterThanZero(pageNumber, nameof(pageNumber));
+
 
             var items = await query.Skip((pageNumber - 1) * pageSize).Take(pageSize).ToListAsync();
             var totalItems = await query.CountAsync();
