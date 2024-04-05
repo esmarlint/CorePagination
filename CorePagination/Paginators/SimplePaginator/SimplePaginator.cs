@@ -26,6 +26,7 @@ namespace CorePagination.Paginators.SimplePaginator
         {
             Guard.NotNull(query, nameof(query));
             Guard.NotNull(parameters, nameof(parameters));
+            Guard.GreaterThanZero(parameters.Page, nameof(parameters.Page));
 
             var items = query.Skip((parameters.Page - 1) * parameters.PageSize).Take(parameters.PageSize).ToList();
             return new PaginationResult<T>
@@ -47,6 +48,7 @@ namespace CorePagination.Paginators.SimplePaginator
         {
             Guard.NotNull(query, nameof(query));
             Guard.NotNull(parameters, nameof(parameters));
+            Guard.GreaterThanZero(parameters.Page, nameof(parameters.Page));
 
             var items = await query.Skip((parameters.Page - 1) * parameters.PageSize).Take(parameters.PageSize).ToListAsync();
             return new PaginationResult<T>
