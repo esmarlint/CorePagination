@@ -17,14 +17,16 @@ public class SimplePaginatorTests
 {
     private static DbContextOptions<FakeDbContext> CreateInMemoryDatabaseOptions()
     {
+        string databaseName = $"TestDatabase_{Guid.NewGuid()}"; 
         return new DbContextOptionsBuilder<FakeDbContext>()
-            .UseInMemoryDatabase(databaseName: "TestDatabase")
+            .UseInMemoryDatabase(databaseName)
             .Options;
     }
 
     private static void SeedTestData(FakeDbContext context)
     {
         ProductSeeder.SeedProducts(context, 20);
+        context.SaveChanges();
     }
 
     [Fact]
@@ -55,7 +57,7 @@ public class SimplePaginatorTests
         // Arrange
         var options = CreateInMemoryDatabaseOptions();
         using var context = new FakeDbContext(options);
-       
+        SeedTestData(context);
 
         var paginator = new SimplePaginator<Product>();
         var parameters = new PaginatorParameters { Page = 5, PageSize = 5 };
