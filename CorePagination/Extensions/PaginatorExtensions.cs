@@ -30,7 +30,7 @@ namespace CorePagination.Extensions
         {
             Guard.NotNull(query, nameof(query));
             Guard.GreaterThanZero(pageNumber, nameof(pageNumber));
-
+            Guard.GreaterThanZero(pageSize, nameof(pageSize));
 
             var items = query.Skip((pageNumber - 1) * pageSize).Take(pageSize).ToList();
             return new PaginationResult<T>
@@ -56,7 +56,7 @@ namespace CorePagination.Extensions
         {
             Guard.NotNull(query, nameof(query));
             Guard.GreaterThanZero(pageNumber, nameof(pageNumber));
-
+            Guard.GreaterThanZero(pageSize, nameof(pageSize));
 
             var totalItems = query.Count();
             var totalPages = (int)Math.Ceiling(totalItems / (double)pageSize);
@@ -91,6 +91,7 @@ namespace CorePagination.Extensions
         {
             Guard.NotNull(query, nameof(query));
             Guard.NotNull(keySelector, nameof(keySelector));
+            Guard.GreaterThanZero(pageSize, nameof(pageSize));
 
             var paginator = new CursorPaginator<T, TKey>(keySelector);
             var parameters = new CursorPaginationParameters<TKey> { PageSize = pageSize, CurrentCursor = currentCursor, Order = order };
@@ -112,7 +113,7 @@ namespace CorePagination.Extensions
         {
             Guard.NotNull(query, nameof(query));
             Guard.GreaterThanZero(pageNumber, nameof(pageNumber));
-
+            Guard.GreaterThanZero(pageSize, nameof(pageSize));
 
             var items = await query.Skip((pageNumber - 1) * pageSize).Take(pageSize).ToListAsync();
             return new PaginationResult<T>
@@ -139,6 +140,7 @@ namespace CorePagination.Extensions
         {
             Guard.NotNull(query, nameof(query));
             Guard.GreaterThanZero(pageNumber, nameof(pageNumber));
+            Guard.GreaterThanZero(pageSize, nameof(pageSize));
 
 
             var items = await query.Skip((pageNumber - 1) * pageSize).Take(pageSize).ToListAsync();
@@ -172,6 +174,7 @@ namespace CorePagination.Extensions
         {
             Guard.NotNull(query, nameof(query));
             Guard.NotNull(keySelector, nameof(keySelector));
+            Guard.GreaterThanZero(pageSize, nameof(pageSize));
 
             var paginator = new CursorPaginator<T, TKey>(keySelector);
             var parameters = new CursorPaginationParameters<TKey> { PageSize = pageSize, CurrentCursor = currentCursor, Order = order };
