@@ -16,5 +16,13 @@ namespace CorePagination.Support
             }
         }
 
+        public static void GreaterThanZero(int number, string parameterName)
+        {
+            if (number < 1)
+            {
+                throw new ArgumentOutOfRangeException(parameterName, "Parameter must be greater than zero.");
+            }
+        }
+
     }
 }

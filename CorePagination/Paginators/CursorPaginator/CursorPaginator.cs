@@ -39,6 +39,7 @@ namespace CorePagination.Paginators.CursorPaginator {
         {
             Guard.NotNull(query, nameof(query));
             Guard.NotNull(parameters, nameof(parameters));
+            Guard.GreaterThanZero(parameters.PageSize, nameof(parameters.PageSize));
 
             IQueryable<T> orderedQuery = parameters.Order == PaginationOrder.Ascending
                 ? query.OrderBy(_keySelector)
@@ -92,6 +93,7 @@ namespace CorePagination.Paginators.CursorPaginator {
         {
             Guard.NotNull(query, nameof(query));
             Guard.NotNull(parameters, nameof(parameters));
+            Guard.GreaterThanZero(parameters.PageSize, nameof(parameters.PageSize));
 
             IQueryable<T> orderedQuery = parameters.Order == PaginationOrder.Ascending
                 ? query.OrderBy(_keySelector)

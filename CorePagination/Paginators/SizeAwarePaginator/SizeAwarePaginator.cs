@@ -22,6 +22,8 @@ namespace CorePagination.Paginators.SizeAwarePaginator
         {
             Guard.NotNull(query, nameof(query));
             Guard.NotNull(parameters, nameof(parameters));
+            Guard.GreaterThanZero(parameters.Page, nameof(parameters.Page));
+            Guard.GreaterThanZero(parameters.PageSize, nameof(parameters.PageSize));
 
             var totalItems = query.Count();
             var totalPages = (int)Math.Ceiling(totalItems / (double)parameters.PageSize);
@@ -47,6 +49,8 @@ namespace CorePagination.Paginators.SizeAwarePaginator
         {
             Guard.NotNull(query, nameof(query));
             Guard.NotNull(parameters, nameof(parameters));
+            Guard.GreaterThanZero(parameters.Page, nameof(parameters.Page));
+            Guard.GreaterThanZero(parameters.PageSize, nameof(parameters.PageSize));
 
             var items = await query.Skip((parameters.Page - 1) * parameters.PageSize).Take(parameters.PageSize).ToListAsync();
             var totalItems = await query.CountAsync();
