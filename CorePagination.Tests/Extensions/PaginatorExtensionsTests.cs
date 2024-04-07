@@ -264,7 +264,10 @@ namespace CorePagination.Tests.Extensions
         [Fact]
         public async Task CursorPaginateAsync_ShouldPaginateCorrectly()
         {
-            var data = Enumerable.Range(1, 50).Select(x => new ProductTests { Id = x }).AsQueryable();
+            var options = CreateInMemoryDatabaseOptions();
+            using var context = new FakeDbContext(options);
+            SeedTestData(context,50);
+            var data = context.Products;
             Expression<Func<ProductTests, int>> keySelector = x => x.Id;
             var pageSize = 10;
             var currentCursor = 20; // Assuming cursor is on value 20
