@@ -1,6 +1,7 @@
 ﻿using CorePagination.Paginators.CursorPaginator;
 using CorePagination.Tests.Support.Models;
 using CorePagination.Tests.Support.Seeds;
+using CorePagination.Tests.Support.Utils;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -13,25 +14,10 @@ namespace CorePagination.Tests.Paginators
 {
     public class CursorPaginatorTests
     {
-        private DbContextOptions<FakeDbContext> CreateInMemoryDatabaseOptions()
-        {
-            string databaseName = $"TestDatabase_{Guid.NewGuid()}";
-            return new DbContextOptionsBuilder<FakeDbContext>()
-                .UseInMemoryDatabase(databaseName)
-                .Options;
-        }
-
-        private void SeedTestData(FakeDbContext context, int amount)
-        {
-            ProductSeeder.SeedProducts(context, amount);
-            context.SaveChanges();
-        }
-
         [Fact]
         public void Constructor_ShouldInitializeProperly()
         {
-            var options = CreateInMemoryDatabaseOptions();
-            using var context = new FakeDbContext(options);
+            using var context = DatabaseSupport.SetupTestDatabase(0);
             var paginator = new CursorPaginator<ProductTests, int>(x => x.Id);
 
             Assert.NotNull(paginator); // Verify the paginator is created.
@@ -40,9 +26,7 @@ namespace CorePagination.Tests.Paginators
         [Fact]
         public void Paginate_ShouldCorrectlyPaginateData()
         {
-            var options = CreateInMemoryDatabaseOptions();
-            using var context = new FakeDbContext(options);
-            SeedTestData(context, 50);  // Assume this adds 50 test items
+            using var context = DatabaseSupport.SetupTestDatabase(50);
 
             var paginator = new CursorPaginator<ProductTests, int>(x => x.Id);
             var pageSize = 10;
@@ -58,8 +42,7 @@ namespace CorePagination.Tests.Paginators
         [Fact]
         public void Paginate_ShouldHandleEmptySource()
         {
-            var options = CreateInMemoryDatabaseOptions();
-            using var context = new FakeDbContext(options);
+            using var context = DatabaseSupport.SetupTestDatabase(0);
 
             var paginator = new CursorPaginator<ProductTests, int>(x => x.Id);
             var paginationResult = paginator.Paginate(context.Products, new CursorPaginationParameters<int> { PageSize = 10, CurrentCursor = 0 });
@@ -71,9 +54,7 @@ namespace CorePagination.Tests.Paginators
         [Fact]
         public async Task PaginateAsync_ShouldCorrectlyPaginateData()
         {
-            var options = CreateInMemoryDatabaseOptions();
-            using var context = new FakeDbContext(options);
-            SeedTestData(context, 50);
+            using var context = DatabaseSupport.SetupTestDatabase(50);
 
             var paginator = new CursorPaginator<ProductTests, int>(x => x.Id);
             var pageSize = 10;
@@ -88,8 +69,7 @@ namespace CorePagination.Tests.Paginators
         [Fact]
         public async Task PaginateAsync_ShouldHandleEmptySource()
         {
-            var options = CreateInMemoryDatabaseOptions();
-            using var context = new FakeDbContext(options);
+            using var context = DatabaseSupport.SetupTestDatabase(0);
 
             var paginator = new CursorPaginator<ProductTests, int>(x => x.Id);
             var paginationResult = await paginator.PaginateAsync(context.Products, new CursorPaginationParameters<int> { PageSize = 10, CurrentCursor = 0 });
