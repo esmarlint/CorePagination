@@ -2,13 +2,14 @@
 using System.Threading.Tasks;
 using CorePagination.Paginators.Common;
 using CorePagination.Paginators.SizeAwarePaginator;
-using CorePagination.Tests.Seeds;
 using Microsoft.EntityFrameworkCore;
-using FakeDbContext = CorePagination.Tests.DatabaseContexts.ApplicationDbContext;
+using FakeDbContext = CorePagination.Tests.Support.DatabaseContexts.ApplicationDbContext;
 using Xunit;
-using CorePagination.Tests.Models;
+using CorePagination.Tests.Support.Seeds;
+using CorePagination.Tests.Support.Models;
 
-namespace CorePagination.Tests.Paginators { 
+namespace CorePagination.Tests.Paginators
+{
     public class SizeAwarePaginatorTests
     {
         private DbContextOptions<FakeDbContext> CreateInMemoryDatabaseOptions()

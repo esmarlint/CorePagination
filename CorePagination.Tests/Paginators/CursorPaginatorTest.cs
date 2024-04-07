@@ -1,13 +1,13 @@
 ﻿using CorePagination.Paginators.CursorPaginator;
-using CorePagination.Tests.Models;
-using CorePagination.Tests.Seeds;
+using CorePagination.Tests.Support.Models;
+using CorePagination.Tests.Support.Seeds;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using FakeDbContext = CorePagination.Tests.DatabaseContexts.ApplicationDbContext;
+using FakeDbContext = CorePagination.Tests.Support.DatabaseContexts.ApplicationDbContext;
 
 namespace CorePagination.Tests.Paginators
 {

@@ -1,42 +1,26 @@
 ﻿using System.Linq;
 using Xunit;
 using Microsoft.EntityFrameworkCore;
-using CorePagination.Tests.DatabaseContexts;
 using CorePagination.Extensions;
-using CorePagination.Tests.Models;
 using System.Threading.Tasks;
-using FakeDbContext = CorePagination.Tests.DatabaseContexts.ApplicationDbContext;
-using Product = CorePagination.Tests.Models.ProductTests;
-using CorePagination.Tests.Seeds;
+using FakeDbContext = CorePagination.Tests.Support.DatabaseContexts.ApplicationDbContext;
+using Product = CorePagination.Tests.Support.Models.ProductTests;
 using CorePagination.Paginators.SimplePaginator;
 using CorePagination.Paginators.Common;
+using CorePagination.Tests.Support.Seeds;
+using CorePagination.Tests.Support.Models;
+using CorePagination.Tests.Support.Utils;
 
 namespace CorePagination.Tests.Paginators;
 
 public class SimplePaginatorTests
 {
-    private static DbContextOptions<FakeDbContext> CreateInMemoryDatabaseOptions()
-    {
-        string databaseName = $"TestDatabase_{Guid.NewGuid()}";
-        return new DbContextOptionsBuilder<FakeDbContext>()
-            .UseInMemoryDatabase(databaseName)
-            .Options;
-    }
-
-    private static void SeedTestData(FakeDbContext context, int amount)
-    {
-        ProductSeeder.SeedProducts(context, amount);
-        context.SaveChanges();
-    }
-
     #region Paginate
     [Fact]
     public void Paginate_ShouldCorrectlyPaginateData()
     {
-        var options = CreateInMemoryDatabaseOptions();
-        using var context = new FakeDbContext(options);
+        using var context = DatabaseSupport.SetupTestDatabase(50);
         var data = context.Products;
-        SeedTestData(context, 50);
 
         var paginator = new SimplePaginator<ProductTests>();
         var pageSize = 10;
@@ -52,9 +36,7 @@ public class SimplePaginatorTests
     [Fact]
     public void Paginate_ShouldReturnEmpty_WhenPageOutOfRange()
     {
-        var options = CreateInMemoryDatabaseOptions();
-        using var context = new FakeDbContext(options);
-        SeedTestData(context, 10);
+        using var context = DatabaseSupport.SetupTestDatabase(10);
 
         var paginator = new SimplePaginator<ProductTests>();
         var parameters = new PaginatorParameters { Page = 5, PageSize = 10 };
@@ -67,8 +49,7 @@ public class SimplePaginatorTests
     [Fact]
     public void Paginate_ShouldHandleEmptySource()
     {
-        var options = CreateInMemoryDatabaseOptions();
-        using var context = new FakeDbContext(options);
+        using var context = DatabaseSupport.SetupTestDatabase(0);
 
         var paginator = new SimplePaginator<ProductTests>();
         var parameters = new PaginatorParameters { Page = 1, PageSize = 10 };
@@ -83,9 +64,7 @@ public class SimplePaginatorTests
     [InlineData(1, -10)] // Page size is invalid
     public void Paginate_ShouldThrowException_WhenGivenInvalidArguments(int pageNumber, int pageSize)
     {
-        var options = CreateInMemoryDatabaseOptions();
-        using var context = new FakeDbContext(options);
-        SeedTestData(context, 10);
+        using var context = DatabaseSupport.SetupTestDatabase(10);
 
         var paginator = new SimplePaginator<ProductTests>();
         var parameters = new PaginatorParameters { Page = pageNumber, PageSize = pageSize };
@@ -99,9 +78,7 @@ public class SimplePaginatorTests
     [Fact]
     public async Task PaginateAsync_ShouldCorrectlyPaginateData()
     {
-        var options = CreateInMemoryDatabaseOptions();
-        using var context = new FakeDbContext(options);
-        SeedTestData(context, 50); 
+        using var context = DatabaseSupport.SetupTestDatabase(50);
 
         var paginator = new SimplePaginator<ProductTests>();
         var pageSize = 10;
@@ -119,9 +96,7 @@ public class SimplePaginatorTests
     [InlineData(1, -10)]  // Invalid page size
     public async Task PaginateAsync_ShouldThrowException_WhenGivenInvalidArguments(int pageNumber, int pageSize)
     {
-        var options = CreateInMemoryDatabaseOptions();
-        using var context = new FakeDbContext(options);
-        SeedTestData(context, 10);
+        using var context = DatabaseSupport.SetupTestDatabase(10);
 
         var paginator = new SimplePaginator<ProductTests>();
         var parameters = new PaginatorParameters { Page = pageNumber, PageSize = pageSize };
@@ -132,8 +107,7 @@ public class SimplePaginatorTests
     [Fact]
     public async Task PaginateAsync_ShouldHandleEmptySource()
     {
-        var options = CreateInMemoryDatabaseOptions();
-        using var context = new FakeDbContext(options);
+        using var context = DatabaseSupport.SetupTestDatabase(0);
 
         var paginator = new SimplePaginator<ProductTests>();
         var parameters = new PaginatorParameters { Page = 1, PageSize = 10 };
