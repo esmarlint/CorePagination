@@ -8,7 +8,7 @@ using FakeDbContext = CorePagination.Tests.DatabaseContexts.ApplicationDbContext
 using Xunit;
 using CorePagination.Tests.Models;
 
-
+namespace CorePagination.Tests.Paginators { 
     public class SizeAwarePaginatorTests
     {
         private DbContextOptions<FakeDbContext> CreateInMemoryDatabaseOptions()
@@ -150,3 +150,4 @@ using CorePagination.Tests.Models;
         #endregion
     }
 
+}
