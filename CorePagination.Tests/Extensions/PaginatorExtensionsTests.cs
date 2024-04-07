@@ -230,5 +230,52 @@ namespace CorePagination.Tests.Extensions
 
         #endregion CursorPaginate
 
+        #region CursorPaginateAsync
+        [Fact]
+        public async Task CursorPaginateAsync_ShouldThrowArgumentNullException_WhenQueryIsNull()
+        {
+            Expression<Func<ProductTests, int>> keySelector = x => x.Id;
+            var pageSize = 10;
+            var currentCursor = 1;
+
+            await Assert.ThrowsAsync<ArgumentNullException>(() => PaginatorExtensions.CursorPaginateAsync<ProductTests, int>(null, keySelector, pageSize, currentCursor));
+        }
+
+        [Fact]
+        public async Task CursorPaginateAsync_ShouldThrowArgumentNullException_WhenKeySelectorIsNull()
+        {
+            var query = new List<ProductTests>().AsQueryable();
+            var pageSize = 10;
+            var currentCursor = 1;
+
+            await Assert.ThrowsAsync<ArgumentNullException>(() => query.CursorPaginateAsync<ProductTests, int>(null, pageSize, currentCursor));
+        }
+
+        [Fact]
+        public async Task CursorPaginateAsync_ShouldThrowArgumentOutOfRangeException_WhenPageSizeIsInvalid()
+        {
+            var query = new List<ProductTests>().AsQueryable();
+            Expression<Func<ProductTests, int>> keySelector = x => x.Id;
+            var currentCursor = 1;
+
+            await Assert.ThrowsAsync<ArgumentOutOfRangeException>(() => query.CursorPaginateAsync(keySelector, 0, currentCursor));
+        }
+
+        [Fact]
+        public async Task CursorPaginateAsync_ShouldPaginateCorrectly()
+        {
+            var data = Enumerable.Range(1, 50).Select(x => new ProductTests { Id = x }).AsQueryable();
+            Expression<Func<ProductTests, int>> keySelector = x => x.Id;
+            var pageSize = 10;
+            var currentCursor = 20; // Assuming cursor is on value 20
+
+            var result = await data.CursorPaginateAsync(keySelector, pageSize, currentCursor);
+
+            Assert.Equal(pageSize, result.Items.Count());
+            Assert.Equal(21, result.Items.First().Id); // The first value should be 21, as the cursor was on 20
+        }
+
+        #endregion CursorPaginateAsync
+
     }
 }
