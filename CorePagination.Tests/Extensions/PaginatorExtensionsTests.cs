@@ -1,6 +1,7 @@
 ﻿using CorePagination.Extensions;
 using CorePagination.Tests.Support.Models;
 using CorePagination.Tests.Support.Seeds;
+using CorePagination.Tests.Support.Utils;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -14,20 +15,6 @@ namespace CorePagination.Tests.Extensions
 {
     public class PaginatorExtensionsTests
     {
-
-        private static DbContextOptions<FakeDbContext> CreateInMemoryDatabaseOptions()
-        {
-            string databaseName = $"TestDatabase_{Guid.NewGuid()}";
-            return new DbContextOptionsBuilder<FakeDbContext>()
-                .UseInMemoryDatabase(databaseName)
-                .Options;
-        }
-
-        private static void SeedTestData(FakeDbContext context,int amount = 30)
-        {
-            ProductSeeder.SeedProducts(context, amount);
-            context.SaveChanges();
-        }
 
         #region SimplePaginate
 
@@ -53,9 +40,7 @@ namespace CorePagination.Tests.Extensions
         [Fact]
         public void SimplePaginate_ShouldPaginateCorrectly()
         {
-            var options = CreateInMemoryDatabaseOptions();
-            using var context = new FakeDbContext(options);
-            SeedTestData(context);
+            using var context = DatabaseSupport.SetupTestDatabase(20);
 
             var data = context.Products;
             var pageNumber = 2;
@@ -89,9 +74,7 @@ namespace CorePagination.Tests.Extensions
         [Fact]
         public async Task SimplePaginateAsync_ShouldPaginateCorrectly()
         {
-            var options = CreateInMemoryDatabaseOptions();
-            using var context = new FakeDbContext(options);
-            SeedTestData(context);
+            using var context = DatabaseSupport.SetupTestDatabase(30);
             var data = context.Products;
             var pageNumber = 2;
             var pageSize = 10;
@@ -128,9 +111,7 @@ namespace CorePagination.Tests.Extensions
         [Fact]
         public void Paginate_ShouldPaginateCorrectly()
         {
-            var options = CreateInMemoryDatabaseOptions();
-            using var context = new FakeDbContext(options);
-            SeedTestData(context,20);
+            using var context = DatabaseSupport.SetupTestDatabase(20);
             var data = context.Products;
             var pageNumber = 2;
             var pageSize = 10;
@@ -165,9 +146,7 @@ namespace CorePagination.Tests.Extensions
         [Fact]
         public async Task PaginateAsync_ShouldPaginateCorrectly()
         {
-            var options = CreateInMemoryDatabaseOptions();
-            using var context = new FakeDbContext(options);
-            SeedTestData(context, 50);
+            using var context = DatabaseSupport.SetupTestDatabase(50);
             var data = context.Products;
             var pageNumber = 2;
             var pageSize = 10;
@@ -264,9 +243,7 @@ namespace CorePagination.Tests.Extensions
         [Fact]
         public async Task CursorPaginateAsync_ShouldPaginateCorrectly()
         {
-            var options = CreateInMemoryDatabaseOptions();
-            using var context = new FakeDbContext(options);
-            SeedTestData(context,50);
+            using var context = DatabaseSupport.SetupTestDatabase(50);
             var data = context.Products;
             Expression<Func<ProductTests, int>> keySelector = x => x.Id;
             var pageSize = 10;
