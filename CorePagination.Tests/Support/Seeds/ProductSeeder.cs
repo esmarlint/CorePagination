@@ -1,9 +1,8 @@
-﻿
-using CorePagination.Tests.DatabaseContexts;
-using CorePagination.Tests.Models;
+﻿using CorePagination.Tests.Support.DatabaseContexts;
+using CorePagination.Tests.Support.Models;
 using System.Linq;
 
-namespace CorePagination.Tests.Seeds
+namespace CorePagination.Tests.Support.Seeds
 {
     public static class ProductSeeder
     {

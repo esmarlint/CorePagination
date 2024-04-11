@@ -43,7 +43,7 @@ namespace CorePagination.Tranformation.Extensions
             where T : class
             where TKey : IComparable
         {
-            var transformer = new CursorUrlResultTranformer<T, TKey>(baseUrl);
+            var transformer = new CursorUrlResultTransformer<T, TKey>(baseUrl);
             return (CursorUrlPaginationResult<T, TKey>)transformer.Transform(paginationResult);
         }
     }

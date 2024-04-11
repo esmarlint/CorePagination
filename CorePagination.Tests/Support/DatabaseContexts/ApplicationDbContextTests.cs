@@ -1,4 +1,4 @@
-﻿using CorePagination.Tests.Models;
+﻿using CorePagination.Tests.Support.Models;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CorePagination.Tests.DatabaseContexts
+namespace CorePagination.Tests.Support.DatabaseContexts
 {
     public class ApplicationDbContext : DbContext
     {

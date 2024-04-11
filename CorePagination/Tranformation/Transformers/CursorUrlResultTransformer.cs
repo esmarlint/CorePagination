@@ -22,7 +22,7 @@ namespace CorePagination.Tranformation.Transformers
     /// </remarks>
     /// <typeparam name="T">The type of the elements in the pagination result.</typeparam>
     /// <typeparam name="TKey">The type of the cursor.</typeparam>
-    public class CursorUrlResultTranformer<T, TKey> : UrlResultTransformerBase<T, CursorUrlPaginationResult<T, TKey>>
+    public class CursorUrlResultTransformer<T, TKey> : UrlResultTransformerBase<T, CursorUrlPaginationResult<T, TKey>>
         where T : class
         where TKey : IComparable
     {
@@ -36,7 +36,7 @@ namespace CorePagination.Tranformation.Transformers
         /// </summary>
         /// <param name="baseUrl">The base URL to be used for generating navigational links. This URL should not include cursor query parameters.</param>
         /// <exception cref="ArgumentNullException">Thrown if the baseUrl is null or empty.</exception>
-        public CursorUrlResultTranformer(string baseUrl)
+        public CursorUrlResultTransformer(string baseUrl)
         {
             Guard.NotNull(baseUrl, nameof(baseUrl));
             _baseUrl = baseUrl;
@@ -99,7 +99,7 @@ namespace CorePagination.Tranformation.Transformers
         /// Configures the transformer to include the current cursor value in the pagination results.
         /// </summary>
         /// <returns>The instance of <see cref="CursorUrlResultTransformer{T, TKey}"/> for further configuration.</returns>
-        public CursorUrlResultTranformer<T, TKey> IncludeCurrentCursor()
+        public CursorUrlResultTransformer<T, TKey> IncludeCurrentCursor()
         {
             _includeCurrentCursor = true;
             return this;
@@ -109,7 +109,7 @@ namespace CorePagination.Tranformation.Transformers
         /// Configures the transformer to include the next cursor value, facilitating forward navigation in the pagination results.
         /// </summary>
         /// <returns>The instance of <see cref="CursorUrlResultTransformer{T, TKey}"/> for further configuration.</returns>
-        public CursorUrlResultTranformer<T, TKey> IncludeNextCursor()
+        public CursorUrlResultTransformer<T, TKey> IncludeNextCursor()
         {
             _includeNextCursor = true;
             return this;
