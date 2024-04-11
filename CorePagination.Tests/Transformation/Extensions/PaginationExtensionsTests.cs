@@ -128,83 +128,108 @@ public class TransformersTests
         Assert.Equal(10, result.TotalItems / result.PageSize);
     }
 
-    //[Fact]
-    //public void CursorUrlResultTransformer_Transform_WithValidCursorPaginationResult_ReturnsCursorUrlPaginationResult()
-    //{
-    //    // Arrange
-    //    var paginationResult = new CursorPaginationResult<int, int>
-    //    {
-    //        Items = Enumerable.Range(1, 10),
-    //        CurrentCursor = 1,
-    //        NextCursor = 11,
-    //        HasMore = true
-    //    };
+    [Fact]
+    public void CursorUrlResultTransformer_Transform_WithValidCursorPaginationResult_ReturnsCursorUrlPaginationResult()
+    {
+        // Arrange
+        var context = DatabaseSupport.SetupTestDatabase(10);
+        var products = context.Products.ToList();
 
-    //    var transformer = new CursorUrlResultTransformer<int, int>("");
+        var paginationResult = new CursorUrlPaginationResult<ProductTests, int>
+        {
+            Items = products,
+            Page = 1,
+            PageSize = 10,
+            TotalItems = products.Count,
+            CurrentCursor = 1,
+            NextCursor = 11,
+            HasMore = false
+        };
 
-    //    // Act
-    //    var result = transformer.Transform(paginationResult);
+        var transformer = new CursorUrlResultTransformer<ProductTests, int>("");
 
-    //    // Assert
-    //    Assert.NotNull(result);
-    //    Assert.Equal(10, result.Items.Count());
-    //    Assert.Equal(1, result.CurrentCursor);
-    //    Assert.Equal(11, result.NextCursor);
-    //    Assert.True(result.HasMore);
-    //}
+        // Act
+        var result = transformer.Transform(paginationResult);
 
-    //[Fact]
-    //public void CursorUrlResultTransformer_Transform_WithInvalidPaginationResult_ThrowsArgumentException()
-    //{
-    //    // Arrange
-    //    var paginationResult = new Mock<IPaginationResult<int>>();
-    //    var transformer = new CursorUrlResultTransformer<int, int>("");
+        // Assert
+        Assert.NotNull(result);
+        Assert.Equal(10, result.Items.Count());
+        Assert.Equal(1, result.CurrentCursor);
+        Assert.Equal(11, result.NextCursor);
+        Assert.Equal(10, result.PageSize);
+    }
 
-    //    // Act & Assert
-    //    Assert.Throws<ArgumentException>(() => transformer.Transform(paginationResult.Object));
-    //}
+    [Fact]
+    public void CursorUrlResultTransformer_Transform_WithInvalidPaginationResult_ThrowsArgumentException()
+    {
+        // Arrange
+        var context = DatabaseSupport.SetupTestDatabase(10);
+        var products = context.Products;
+        var paginationResult = new Mock<IPaginationResult<ProductTests>>();
+        paginationResult.SetupGet(x => x.Items).Returns(products);
+        paginationResult.SetupGet(x => x.Page).Returns(1);
+        paginationResult.SetupGet(x => x.PageSize).Returns(10);
+        paginationResult.SetupGet(x => x.TotalItems).Returns(100);
 
-    //[Fact]
-    //public void CursorUrlResultTransformer_Transform_WithIncludeCurrentCursor_ReturnsCursorUrlPaginationResultWithCurrentCursor()
-    //{
-    //    // Arrange
-    //    var paginationResult = new CursorPaginationResult<int, int>
-    //    {
-    //        Items = Enumerable.Range(1, 10),
-    //        CurrentCursor = 1,
-    //        NextCursor = 11,
-    //        HasMore = true
-    //    };
+        var transformer = new CursorUrlResultTransformer<ProductTests, int>("");
 
-    //    var transformer = new CursorUrlResultTransformer<int, int>("")
-    //        .IncludeCurrentCursor();
+        // Act & Assert
+        Assert.Throws<ArgumentException>(() => transformer.Transform(paginationResult.Object));
+    }
 
-    //    // Act
-    //    var result = transformer.Transform(paginationResult);
+    [Fact]
+    public void CursorUrlResultTransformer_Transform_WithIncludeNextCursor_ReturnsCursorUrlPaginationResultWithNextCursor()
+    {
+        // Arrange
+        var context = DatabaseSupport.SetupTestDatabase(10);
+        var products = context.Products.ToList();
 
-    //    // Assert
-    //    Assert.Equal(1, result.CurrentCursor);
-    //}
+        var paginationResult = new CursorUrlPaginationResult<ProductTests, int>
+        {
+            Items = products,
+            Page = 1,
+            PageSize = 10,
+            TotalItems = 100,
+            CurrentCursor = 1,
+            NextCursor = 11
+        };
 
-    //[Fact]
-    //public void CursorUrlResultTransformer_Transform_WithIncludeNextCursor_ReturnsCursorUrlPaginationResultWithNextCursor()
-    //{
-    //    // Arrange
-    //    var paginationResult = new CursorPaginationResult<int, int>
-    //    {
-    //        Items = Enumerable.Range(1, 10),
-    //        CurrentCursor = 1,
-    //        NextCursor = 11,
-    //        HasMore = true
-    //    };
+        var transformer = new CursorUrlResultTransformer<ProductTests, int>("")
+            .IncludeNextCursor();
 
-    //    var transformer = new CursorUrlResultTransformer<int, int>("")
-    //        .IncludeNextCursor();
+        // Act
+        var result = transformer.Transform(paginationResult);
 
-    //    // Act
-    //    var result = transformer.Transform(paginationResult);
+        // Assert
+        Assert.NotNull(result.NextCursor);
+        Assert.Equal(11, result.NextCursor);
+    }
 
-    //    // Assert
-    //    Assert.Equal(11, result.NextCursor);
-    //}
+    [Fact]
+    public void CursorUrlResultTransformer_Transform_WithIncludeCurrentCursor_ReturnsCursorUrlPaginationResultWithCurrentCursor()
+    {
+        // Arrange
+        var context = DatabaseSupport.SetupTestDatabase(10);
+        var products = context.Products.ToList();
+
+        var paginationResult = new CursorUrlPaginationResult<ProductTests, int>
+        {
+            Items = products,
+            Page = 1,
+            PageSize = 10,
+            TotalItems = 100,
+            CurrentCursor = 1,
+            NextCursor = 11
+        };
+
+        var transformer = new CursorUrlResultTransformer<ProductTests, int>("")
+            .IncludeCurrentCursor();
+
+        // Act
+        var result = transformer.Transform(paginationResult);
+
+        // Assert
+        Assert.NotNull(result.CurrentCursor);
+        Assert.Equal(1, result.CurrentCursor);
+    }
 }
