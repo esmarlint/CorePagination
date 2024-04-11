@@ -2,12 +2,14 @@
 using CorePagination.Paginators.Common;
 using CorePagination.Paginators.CursorPaginator;
 using CorePagination.Paginators.SizeAwarePaginator;
+using CorePagination.Tests.Support.Models;
 using CorePagination.Tranformation.Transformers;
 using Moq;
 using System;
 using System.Linq;
 using Xunit;
 
+namespace CorePagination.Tranformation.Extensions;
 public class TransformersTests
 {
     // Pruebas para SimpleUrlResultTransformer
