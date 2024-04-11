@@ -3,23 +3,25 @@ using CorePagination.Paginators.Common;
 using CorePagination.Paginators.CursorPaginator;
 using CorePagination.Paginators.SizeAwarePaginator;
 using CorePagination.Tests.Support.Models;
+using CorePagination.Tests.Support.Utils;
 using CorePagination.Tranformation.Transformers;
 using Moq;
 using System;
 using System.Linq;
 using Xunit;
 
-namespace CorePagination.Tranformation.Extensions;
+namespace CorePagination.Tranformation.Transformers;
 public class TransformersTests
 {
-    // Pruebas para SimpleUrlResultTransformer
 
     [Fact]
     public void SimpleUrlResultTransformer_Transform_WithValidPaginationResult_ReturnsUrlPaginationResult()
     {
         // Arrange
+        var context = DatabaseSupport.SetupTestDatabase(10);
+        var products = context.Products;
         var paginationResult = new Mock<IPaginationResult<UrlPaginationResult<ProductTests>>>();
-        paginationResult.SetupGet(x => x.Items).Returns(Enumerable.Range(1, 10).Select(e=> new UrlPaginationResult<ProductTests>()));
+        paginationResult.SetupGet(x => x.Items).Returns(products.Select(e=> new UrlPaginationResult<ProductTests>()));
         paginationResult.SetupGet(x => x.Page).Returns(1);
         paginationResult.SetupGet(x => x.PageSize).Returns(10);
         paginationResult.SetupGet(x => x.TotalItems).Returns(100);
@@ -47,19 +49,19 @@ public class TransformersTests
         Assert.Throws<ArgumentNullException>(() => transformer.Transform(null));
     }
 
-    // Pruebas para SizeAwareUrlResultTransformer
-
     [Fact]
     public void SizeAwareUrlResultTransformer_Transform_WithValidPaginationResult_ReturnsUrlPaginationResult()
     {
         // Arrange
+        var context = DatabaseSupport.SetupTestDatabase(10);
+        var products = context.Products;
         var paginationResult = new Mock<IPaginationResult<UrlPaginationResult<ProductTests>>>();
-        paginationResult.SetupGet(x => x.Items).Returns(Enumerable.Range(1, 10).Select(e=>new UrlPaginationResult<ProductTests>()));
+        paginationResult.SetupGet(x => x.Items).Returns(products.Select(e=>new UrlPaginationResult<ProductTests>()));
         paginationResult.SetupGet(x => x.Page).Returns(1);
         paginationResult.SetupGet(x => x.PageSize).Returns(10);
         paginationResult.SetupGet(x => x.TotalItems).Returns(100);
 
-        var transformer = new SizeAwareUrlResultTransformer<UrlPaginationResult<ProductTests>> ("");
+        var transformer = new SizeAwareUrlResultTransformer<UrlPaginationResult<ProductTests>>("");
 
         // Act
         var result = transformer.Transform(paginationResult.Object);
@@ -86,8 +88,10 @@ public class TransformersTests
     public void SizeAwareUrlResultTransformer_Transform_WithIncludeTotalItems_ReturnsUrlPaginationResultWithTotalItems()
     {
         // Arrange
+        var context = DatabaseSupport.SetupTestDatabase(10);
+        var products = context.Products;
         var paginationResult = new Mock<IPaginationResult<UrlPaginationResult<ProductTests>>>();
-        paginationResult.SetupGet(x => x.Items).Returns(Enumerable.Range(1, 10).Select(e => new UrlPaginationResult<ProductTests>() ));
+        paginationResult.SetupGet(x => x.Items).Returns(products.Select(e => new UrlPaginationResult<ProductTests>() ));
         paginationResult.SetupGet(x => x.Page).Returns(1);
         paginationResult.SetupGet(x => x.PageSize).Returns(10);
         paginationResult.SetupGet(x => x.TotalItems).Returns(100);
@@ -106,8 +110,10 @@ public class TransformersTests
     public void SizeAwareUrlResultTransformer_Transform_WithIncludeTotalPages_ReturnsUrlPaginationResultWithTotalPages()
     {
         // Arrange
+        var context = DatabaseSupport.SetupTestDatabase(10);
+        var products = context.Products;
         var paginationResult = new Mock<IPaginationResult<SizeAwarePaginationResult<ProductTests>>>();
-        paginationResult.SetupGet(x => x.Items).Returns(Enumerable.Range(1, 10).Select(e=>new SizeAwarePaginationResult<ProductTests>()));
+        paginationResult.SetupGet(x => x.Items).Returns(products.Select(e=>new SizeAwarePaginationResult<ProductTests>()));
         paginationResult.SetupGet(x => x.Page).Returns(1);
         paginationResult.SetupGet(x => x.PageSize).Returns(10);
         paginationResult.SetupGet(x => x.TotalItems).Returns(100);
@@ -121,8 +127,6 @@ public class TransformersTests
         //Assert
         Assert.Equal(10, result.TotalItems / result.PageSize);
     }
-
-    // Pruebas para CursorUrlResultTransformer
 
     //[Fact]
     //public void CursorUrlResultTransformer_Transform_WithValidCursorPaginationResult_ReturnsCursorUrlPaginationResult()
