@@ -83,5 +83,74 @@ namespace CorePagination.Tests.Transformation.Transformers
             Assert.Equal(10, result.PageSize);
             Assert.Equal(100, result.TotalItems);
         }
+
+        [Fact]
+        public void Transform_WithBaseUrl_GeneratesCorrectUrls()
+        {
+            // Arrange
+            var paginationResult = new PaginationResult<ProductTests>
+            {
+                Items = new List<ProductTests> { new ProductTests(), new ProductTests() },
+                Page = 2,
+                PageSize = 10,
+                TotalItems = 30
+            };
+            var transformer = new SimpleUrlResultTransformer<ProductTests>("https://example.com/products");
+
+            // Act
+            var result = transformer.Transform(paginationResult);
+
+            // Assert
+            Assert.Equal("https://example.com/products?page=1", result.FirstPageUrl);
+            Assert.Equal("https://example.com/products?page=1", result.PreviousUrl);
+            Assert.Equal("https://example.com/products?page=2", result.CurrentUrl);
+            Assert.Equal("https://example.com/products?page=3", result.NextUrl);
+        }
+
+        [Fact]
+        public void Transform_WithEmptyBaseUrl_GeneratesRelativeUrls()
+        {
+            // Arrange
+            var paginationResult = new PaginationResult<ProductTests>
+            {
+                Items = new List<ProductTests> { new ProductTests(), new ProductTests() },
+                Page = 1,
+                PageSize = 10,
+                TotalItems = 30
+            };
+            var transformer = new SimpleUrlResultTransformer<ProductTests>("");
+
+            // Act
+            var result = transformer.Transform(paginationResult);
+
+            // Assert
+            Assert.Equal("?page=1", result.FirstPageUrl);
+            Assert.Null(result.PreviousUrl);
+            Assert.Equal("?page=1", result.CurrentUrl);
+            Assert.Equal("?page=2", result.NextUrl);
+        }
+
+        [Fact]
+        public void Transform_WithAdditionalParameters_IncludesParametersInUrls()
+        {
+            // Arrange
+            var paginationResult = new PaginationResult<ProductTests>
+            {
+                Items = new List<ProductTests> { new ProductTests(), new ProductTests() },
+                Page = 1,
+                PageSize = 10,
+                TotalItems = 30
+            };
+            var transformer = new SimpleUrlResultTransformer<ProductTests>("https://example.com/products")
+                .AddParameter("sort", "name")
+                .AddParameter("order", "asc");
+
+            // Act
+            var result = transformer.Transform(paginationResult);
+
+            // Assert
+            Assert.Contains("sort=name", result.FirstPageUrl);
+            Assert.Contains("order=asc", result.FirstPageUrl);
+        }
     }
 }
