@@ -15,7 +15,6 @@ namespace CorePagination.Tranformation.Transformers
     public class SimpleUrlResultTransformer<T> : UrlResultTransformerBase<T, UrlPaginationResult<T>> where T : class
     {
         private readonly string _baseUrl;
-        private readonly Dictionary<string, string> _parametersToInclude = new Dictionary<string, string>();
         private readonly Dictionary<string, string> _parameterRenames = new Dictionary<string, string>();
 
         /// <summary>
