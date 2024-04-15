@@ -43,18 +43,20 @@ namespace CorePagination.Tranformation.Transformers
             var hasNextPage = paginationResult.Items.Count() == pageSize;
             var hasPrevPage = currentPage > 1;
 
-            var baseQueryString = _parametersToInclude.Select(kv =>
-            {
-                string value = kv.Key switch
-                {
-                    "page" => currentPage.ToString(),
-                    "pageSize" => pageSize.ToString(),
-                    _ => kv.Value
-                };
-                return $"{_parameterRenames.GetValueOrDefault(kv.Key, kv.Key)}={value}";
-            }).ToList();
+            var baseQueryString = new List<string>();
 
-            string BuildUrl(int page) => $"{_baseUrl}?{string.Join("&", baseQueryString)}".Replace($"page={currentPage}", $"page={page}");
+            foreach (var parameter in _parametersToInclude)
+            {
+                var parameterName = _parameterRenames.GetValueOrDefault(parameter.Key, parameter.Key);
+                var parameterValue = parameter.Value;
+                baseQueryString.Add($"{parameterName}={parameterValue}");
+            }
+
+            baseQueryString.Add("page={0}");
+
+            var queryString = string.Join("&", baseQueryString);
+
+            string BuildUrl(int page) => $"{_baseUrl}?{string.Format(queryString, page)}";
 
             return new UrlPaginationResult<T>
             {
