@@ -40,7 +40,7 @@ namespace CorePagination.Tranformation.Transformers
 
             var currentPage = paginationResult.Page;
             var pageSize = paginationResult.PageSize;
-            var hasNextPage = paginationResult.Items.Count() == pageSize;
+            var hasNextPage = paginationResult.TotalItems > currentPage * pageSize;
             var hasPrevPage = currentPage > 1;
 
             var baseQueryString = new List<string>();
