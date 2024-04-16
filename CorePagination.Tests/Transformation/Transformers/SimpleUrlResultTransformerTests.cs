@@ -90,7 +90,7 @@ namespace CorePagination.Tests.Transformation.Transformers
             // Arrange
             var paginationResult = new PaginationResult<ProductTests>
             {
-                Items = new List<ProductTests> { new ProductTests(), new ProductTests() },
+                Items = Enumerable.Range(1,30).Select(product=> new ProductTests()),
                 Page = 2,
                 PageSize = 10,
                 TotalItems = 30
@@ -113,7 +113,7 @@ namespace CorePagination.Tests.Transformation.Transformers
             // Arrange
             var paginationResult = new PaginationResult<ProductTests>
             {
-                Items = new List<ProductTests> { new ProductTests(), new ProductTests() },
+                Items = Enumerable.Range(1, 30).Select(product => new ProductTests()),
                 Page = 1,
                 PageSize = 10,
                 TotalItems = 30
