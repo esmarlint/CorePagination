@@ -61,9 +61,24 @@ namespace CorePagination.Tranformation.Transformers
 
             var queryParams = new List<string>
             {
-                $"pageSize={cursorPaginationResult.PageSize}",
-                $"currentCursor={cursorPaginationResult.CurrentCursor}"
+                $"pageSize={cursorPaginationResult.PageSize}"
             };
+
+            if (_includeCurrentCursor && cursorPaginationResult.CurrentCursor != null)
+            {
+                queryParams.Add($"currentCursor={cursorPaginationResult.CurrentCursor}");
+            }
+
+            if (_includeNextCursor && cursorPaginationResult.NextCursor != null)
+            {
+                queryParams.Add($"nextCursor={cursorPaginationResult.NextCursor}");
+            }
+
+            if (_includeDirection)
+            {
+                var direction = cursorPaginationResult.CurrentCursor ;
+                queryParams.Add($"direction={direction}");
+            }
 
             var queryString = string.Join("&", queryParams);
             var baseUrlWithParams = $"{_baseUrl}?{queryString}";
@@ -74,8 +89,7 @@ namespace CorePagination.Tranformation.Transformers
                 PageSize = cursorPaginationResult.PageSize,
                 CurrentCursor = cursorPaginationResult.CurrentCursor,
                 NextCursor = cursorPaginationResult.NextCursor,
-                CurrentUrl = baseUrlWithParams,
-                NextPageUrl = cursorPaginationResult.HasMore ? baseUrlWithParams.Replace($"currentCursor={cursorPaginationResult.CurrentCursor}", $"currentCursor={cursorPaginationResult.NextCursor}") : null
+                CurrentUrl = baseUrlWithParams
             };
         }
 
