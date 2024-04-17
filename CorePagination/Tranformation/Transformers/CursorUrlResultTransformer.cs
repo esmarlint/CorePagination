@@ -54,32 +54,16 @@ namespace CorePagination.Tranformation.Transformers
         {
             Guard.NotNull(paginationResult, nameof(paginationResult));
 
-            var cursorPaginationResult = paginationResult as CursorUrlPaginationResult<T, TKey>;
-            if (cursorPaginationResult == null)
+            if (!(paginationResult is CursorPaginationResult<T, TKey> cursorPaginationResult))
             {
-                throw new ArgumentException("The pagination result is not a cursor pagination result.", nameof(paginationResult));
+                throw new ArgumentException("The pagination result must be of type CursorPaginationResult<T, TKey>.", nameof(paginationResult));
             }
 
             var queryParams = new List<string>
             {
-                $"pageSize={cursorPaginationResult.PageSize}"
+                $"pageSize={cursorPaginationResult.PageSize}",
+                $"currentCursor={cursorPaginationResult.CurrentCursor}"
             };
-
-            if (_includeCurrentCursor && cursorPaginationResult.CurrentCursor != null)
-            {
-                queryParams.Add($"currentCursor={cursorPaginationResult.CurrentCursor}");
-            }
-
-            if (_includeNextCursor && cursorPaginationResult.NextCursor != null)
-            {
-                queryParams.Add($"nextCursor={cursorPaginationResult.NextCursor}");
-            }
-
-            if (_includeDirection)
-            {
-                var direction = cursorPaginationResult.CurrentCursor ;
-                queryParams.Add($"direction={direction}");
-            }
 
             var queryString = string.Join("&", queryParams);
             var baseUrlWithParams = $"{_baseUrl}?{queryString}";
@@ -90,7 +74,8 @@ namespace CorePagination.Tranformation.Transformers
                 PageSize = cursorPaginationResult.PageSize,
                 CurrentCursor = cursorPaginationResult.CurrentCursor,
                 NextCursor = cursorPaginationResult.NextCursor,
-                CurrentUrl = baseUrlWithParams
+                CurrentUrl = baseUrlWithParams,
+                NextPageUrl = cursorPaginationResult.HasMore ? baseUrlWithParams.Replace($"currentCursor={cursorPaginationResult.CurrentCursor}", $"currentCursor={cursorPaginationResult.NextCursor}") : null
             };
         }
 
