@@ -64,6 +64,8 @@ namespace CorePagination.Tranformation.Transformers
                 $"pageSize={cursorPaginationResult.PageSize}"
             };
 
+            queryParams.Add($"page={cursorPaginationResult.Page}");
+
             if (_includeCurrentCursor && cursorPaginationResult.CurrentCursor != null)
             {
                 queryParams.Add($"currentCursor={cursorPaginationResult.CurrentCursor}");
