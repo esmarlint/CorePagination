@@ -70,7 +70,8 @@ public class TransformersTests
             Items = Enumerable.Range(1, 10).Select(product => new ProductTests()),
             CurrentCursor = 1,
             NextCursor = 11,
-            PageSize = 10
+            PageSize = 10,
+            Page = 1
         };
         var baseUrl = "https://example.com/products";
 
@@ -80,7 +81,11 @@ public class TransformersTests
         // Assert
         Assert.NotNull(result);
         Assert.IsType<CursorUrlPaginationResult<ProductTests, int>>(result);
-        Assert.Equal(baseUrl + "?pageSize=10&currentCursor=1", result.CurrentUrl);
+        Assert.Contains("currentCursor=1", result.CurrentUrl);
+        Assert.Contains("nextCursor=11", result.CurrentUrl);
+        Assert.Contains("page=1", result.CurrentUrl);
+        Assert.Contains("pageSize=10", result.CurrentUrl);
+
     }
 
 }
