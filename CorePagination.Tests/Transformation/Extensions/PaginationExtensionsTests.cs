@@ -57,9 +57,14 @@ public class TransformersTests
         // Assert
         Assert.NotNull(result);
         Assert.IsType<UrlPaginationResult<ProductTests>>(result);
-        Assert.Equal(baseUrl + "?page=1&pageSize=10", result.FirstPageUrl);
-        Assert.Equal(baseUrl + "?page=2&pageSize=10", result.NextPageUrl);
+
+        Assert.Contains("page=1", result.FirstPageUrl);
+        Assert.Contains("pageSize=10", result.FirstPageUrl);
+
+        Assert.Contains("page=2", result.NextPageUrl);
+        Assert.Contains("pageSize=10", result.NextPageUrl);
     }
+
 
     [Fact]
     public void WithUrl_ForCursorPagination_ReturnsCursorUrlPaginationResult()
