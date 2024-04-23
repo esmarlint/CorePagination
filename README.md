@@ -423,10 +423,6 @@ To apply URL transformations to your pagination results, you can use the extensi
 ```csharp
 var urlPaginationResult = await products.PaginateAsync(pageNumber, pageSize)
                                          .WithUrl("/products")
-                                         .IncludeTotalItems()
-                                         .IncludeTotalPages()
-                                         .IncludePageSize()
-                                         .RenameParameter("page", "p");
 ```
 
 In this example, the `WithUrl` extension method is called directly on the result of `PaginateAsync`, passing in the base path for the generated links. The extension method returns a new `UrlPaginationResult<T>` object that includes the navigational URLs. Additional configuration options, such as including total items, total pages, page size, and renaming parameters, are chained using the fluent API.
@@ -457,8 +453,6 @@ In this example, instead of providing a complete base URL, only the relative pat
 ```csharp
 var urlPaginationResult = await products.CursorPaginateAsync(p => p.Id, pageSize, currentCursor)
                                          .WithUrl("/products")
-                                         .IncludeCurrentCursor()
-                                         .IncludeNextCursor();
 ```
 
 In this example, cursor-based pagination is used with the `CursorPaginateAsync` method. The `WithUrl` extension method is then applied directly on the pagination result, providing only the relative path `/products`. Additional options, such as including the current and next cursor values, are configured using the fluent API.
