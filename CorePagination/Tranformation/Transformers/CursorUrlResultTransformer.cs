@@ -54,16 +54,17 @@ namespace CorePagination.Tranformation.Transformers
         {
             Guard.NotNull(paginationResult, nameof(paginationResult));
 
-            var cursorPaginationResult = paginationResult as CursorUrlPaginationResult<T, TKey>;
-            if (cursorPaginationResult == null)
+            if (!(paginationResult is CursorPaginationResult<T, TKey> cursorPaginationResult))
             {
-                throw new ArgumentException("The pagination result is not a cursor pagination result.", nameof(paginationResult));
+                throw new ArgumentException("The pagination result must be of type CursorPaginationResult<T, TKey>.", nameof(paginationResult));
             }
 
             var queryParams = new List<string>
             {
                 $"pageSize={cursorPaginationResult.PageSize}"
             };
+
+            queryParams.Add($"page={cursorPaginationResult.Page}");
 
             if (_includeCurrentCursor && cursorPaginationResult.CurrentCursor != null)
             {
