@@ -461,11 +461,11 @@ By leveraging the URL transformation extensions and customizing the transformers
 
 ## Upcoming Changes
 
-🎉 **Version 0.5.0 Released**: CorePagination version 0.5.0 is now available on NuGet! This release includes various improvements and bug fixes to enhance the library's functionality and reliability.
+🎉 **Version 0.6.0 Released**: CorePagination version 0.6.0 is now available on NuGet! This release includes various improvements and bug fixes to enhance the library's functionality and reliability.
 
 ### Changelog
 
-#### Version 0.5.0
+#### Version 0.6.0
 
 ##### Improvements
 
@@ -485,11 +485,11 @@ For the upcoming 1.0 release, we are planning to include:
   - ✓ XML documentation added to the codebase for easier usage and understanding.
   - X Spanish documentation (discarded until future versions).
 - ✓ **Branding**: Logo selected for CorePagination.
-- **Unit Testing**: Pending
+- ✓ **Unit Testing**: Pending
 - **Benchmarks**: Pending
-- **NuGet Packaging**: CorePagination is available on NuGet.
+- ✓ **NuGet Packaging**: CorePagination is available on NuGet.
 - **GitHub Packaging**: In progress, will be added soon.
-- **Basic Extensions**: Inclusion of basic extensions to facilitate the usage of the library.
+- ✓ **Basic Extensions**: Inclusion of basic extensions to facilitate the usage of the library.
 
 The primary focus for version 1.0.0 is to deliver a solid foundation with unit tests, comprehensive documentation, benchmarks, base paginators, base transformers, and basic extensions to ensure a smooth development experience.
 
