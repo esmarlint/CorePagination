@@ -1,5 +1,17 @@
 ![Banner](docs/images/banner.png)
 
+<p align="center">
+  <a href="#" target="_blank">
+    <img src="https://badgen.net/badge/version/v0.6.0/purple" alt="">
+  </a>
+  <a href="#" target="_blank">
+    <img src="https://badgen.net/badge/licence/MIT/purple" alt="">
+  </a>
+  <a href="https://badgen.net/badge/completed%20tests/67/green" target="_blank">
+    <img src="https://badgen.net/badge/tests/67/green" alt="">
+  </a>
+</p>
+
 # CorePagination
 
 CorePagination is a **lightweight and easy-to-use** pagination library designed specifically for **Entity Framework Core (EF Core)**. It offers a **straightforward and extensible** way to add pagination functionality to your **.NET projects**, improving efficiency and management of large datasets. 📊💪
@@ -423,10 +435,6 @@ To apply URL transformations to your pagination results, you can use the extensi
 ```csharp
 var urlPaginationResult = await products.PaginateAsync(pageNumber, pageSize)
                                          .WithUrl("/products")
-                                         .IncludeTotalItems()
-                                         .IncludeTotalPages()
-                                         .IncludePageSize()
-                                         .RenameParameter("page", "p");
 ```
 
 In this example, the `WithUrl` extension method is called directly on the result of `PaginateAsync`, passing in the base path for the generated links. The extension method returns a new `UrlPaginationResult<T>` object that includes the navigational URLs. Additional configuration options, such as including total items, total pages, page size, and renaming parameters, are chained using the fluent API.
@@ -457,8 +465,6 @@ In this example, instead of providing a complete base URL, only the relative pat
 ```csharp
 var urlPaginationResult = await products.CursorPaginateAsync(p => p.Id, pageSize, currentCursor)
                                          .WithUrl("/products")
-                                         .IncludeCurrentCursor()
-                                         .IncludeNextCursor();
 ```
 
 In this example, cursor-based pagination is used with the `CursorPaginateAsync` method. The `WithUrl` extension method is then applied directly on the pagination result, providing only the relative path `/products`. Additional options, such as including the current and next cursor values, are configured using the fluent API.
@@ -467,11 +473,11 @@ By leveraging the URL transformation extensions and customizing the transformers
 
 ## Upcoming Changes
 
-🎉 **Version 0.5.0 Released**: CorePagination version 0.5.0 is now available on NuGet! This release includes various improvements and bug fixes to enhance the library's functionality and reliability.
+🎉 **Version 0.6.0 Released**: CorePagination version 0.6.0 is now available on NuGet! This release includes various improvements and bug fixes to enhance the library's functionality and reliability.
 
 ### Changelog
 
-#### Version 0.5.0
+#### Version 0.6.0
 
 ##### Improvements
 
@@ -491,11 +497,11 @@ For the upcoming 1.0 release, we are planning to include:
   - ✓ XML documentation added to the codebase for easier usage and understanding.
   - X Spanish documentation (discarded until future versions).
 - ✓ **Branding**: Logo selected for CorePagination.
-- **Unit Testing**: Pending
+- ✓ **Unit Testing**: Pending
 - **Benchmarks**: Pending
-- **NuGet Packaging**: CorePagination is available on NuGet.
+- ✓ **NuGet Packaging**: CorePagination is available on NuGet.
 - **GitHub Packaging**: In progress, will be added soon.
-- **Basic Extensions**: Inclusion of basic extensions to facilitate the usage of the library.
+- ✓ **Basic Extensions**: Inclusion of basic extensions to facilitate the usage of the library.
 
 The primary focus for version 1.0.0 is to deliver a solid foundation with unit tests, comprehensive documentation, benchmarks, base paginators, base transformers, and basic extensions to ensure a smooth development experience.
 
