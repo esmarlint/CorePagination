@@ -1,5 +1,17 @@
 ![Banner](docs/images/banner.png)
 
+<p align="center">
+  <a href="#" target="_blank">
+    <img src="https://badgen.net/badge/version/v0.6.0/purple" alt="">
+  </a>
+  <a href="#" target="_blank">
+    <img src="https://badgen.net/badge/licence/MIT/purple" alt="">
+  </a>
+  <a href="https://badgen.net/badge/completed%20tests/67/green" target="_blank">
+    <img src="https://badgen.net/badge/tests/67/green" alt="">
+  </a>
+</p>
+
 # CorePagination
 
 CorePagination is a **lightweight and easy-to-use** pagination library designed specifically for **Entity Framework Core (EF Core)**. It offers a **straightforward and extensible** way to add pagination functionality to your **.NET projects**, improving efficiency and management of large datasets. 📊💪
