@@ -1,18 +1,37 @@
 ﻿using BenchmarkDotNet.Attributes;
 using BenchmarkDotNet.Running;
 using CorePagination.Extensions;
+using Microsoft.EntityFrameworkCore;
 using System.Linq;
 
 namespace CorePagination.Benchmarks
 {
+    public class BenchmarkDbContext : DbContext
+    {
+        public DbSet<Product> Products { get; set; }
+
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {
+            optionsBuilder.UseInMemoryDatabase("BenchmarkDatabase");
+        }
+    }
+
     [MemoryDiagnoser]
     public class PaginationBenchmarks
     {
-        private readonly IQueryable<Product> _data;
+        private BenchmarkDbContext _context;
 
-        public PaginationBenchmarks()
+        [GlobalSetup]
+        public void Setup()
         {
-            _data = Enumerable.Range(1, 10000).Select(i => new Product { Id = i, Name = $"Product {i}" }).AsQueryable();
+            _context = new BenchmarkDbContext();
+
+            var products = Enumerable.Range(1, 10000)
+                .Select(i => new Product { Id = i, Name = $"Product {i}" })
+                .ToList();
+
+            _context.Products.AddRange(products);
+            _context.SaveChanges();
         }
 
         [Benchmark]
@@ -20,7 +39,8 @@ namespace CorePagination.Benchmarks
         [Arguments(1000, 20)]
         public async Task PaginateAsync(int totalItems, int pageSize)
         {
-            var result = await _data.Take(totalItems).PaginateAsync(1, pageSize);
+            var query = _context.Products.Take(totalItems);
+            var result = await query.PaginateAsync(1, pageSize);
         }
 
         [Benchmark]
@@ -28,7 +48,8 @@ namespace CorePagination.Benchmarks
         [Arguments(1000, 20)]
         public async Task SimplePaginateAsync(int totalItems, int pageSize)
         {
-            var result = await _data.Take(totalItems).SimplePaginateAsync(1, pageSize);
+            var query = _context.Products.Take(totalItems);
+            var result = await query.SimplePaginateAsync(1, pageSize);
         }
     }
 
