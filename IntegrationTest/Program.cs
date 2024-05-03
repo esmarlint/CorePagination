@@ -51,6 +51,15 @@ namespace CorePagination.Benchmarks
             var query = _context.Products.Take(totalItems);
             var result = await query.SimplePaginateAsync(1, pageSize);
         }
+
+        [Benchmark]
+        [Arguments(100, 10)]
+        [Arguments(1000, 20)]
+        public async Task CursorPaginateAsync(int totalItems, int pageSize)
+        {
+            var query = _context.Products.Take(totalItems).OrderBy(p => p.Id);
+            var result = await query.CursorPaginateAsync(p => p.Id, pageSize);
+        }
     }
 
     public class Program
