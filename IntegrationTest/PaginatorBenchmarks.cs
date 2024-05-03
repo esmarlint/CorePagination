@@ -47,5 +47,32 @@ namespace CorePagination.Benchmarks
             var query = _context.Products.Take(totalItems).OrderBy(p => p.Id);
             var result = await query.CursorPaginateAsync(p => p.Id, pageSize);
         }
+
+        [Benchmark]
+        [Arguments(100, 10)]
+        [Arguments(1000, 20)]
+        public void Paginate(int totalItems, int pageSize)
+        {
+            var query = _context.Products.Take(totalItems);
+            var result = query.Paginate(1, pageSize);
+        }
+
+        [Benchmark]
+        [Arguments(100, 10)]
+        [Arguments(1000, 20)]
+        public void SimplePaginate(int totalItems, int pageSize)
+        {
+            var query = _context.Products.Take(totalItems);
+            var result = query.SimplePaginate(1, pageSize);
+        }
+
+        [Benchmark]
+        [Arguments(100, 10)]
+        [Arguments(1000, 20)]
+        public void CursorPaginate(int totalItems, int pageSize)
+        {
+            var query = _context.Products.Take(totalItems).OrderBy(p => p.Id);
+            var result = query.CursorPaginate(p => p.Id, pageSize);
+        }
     }
 }
