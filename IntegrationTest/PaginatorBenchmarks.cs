@@ -1,5 +1,8 @@
 ﻿using BenchmarkDotNet.Attributes;
 using CorePagination.Extensions;
+using CorePagination.Paginators.CursorPaginator;
+using CorePagination.Paginators.SimplePaginator;
+using CorePagination.Paginators.SizeAwarePaginator;
 
 namespace CorePagination.Benchmarks
 {
@@ -7,6 +10,9 @@ namespace CorePagination.Benchmarks
     public class PaginatorBenchmarks
     {
         private BenchmarkDbContext _context;
+        private SizeAwarePaginator<Product> _sizeAwarePaginator;
+        private SimplePaginator<Product> _simplePaginator;
+        private CursorPaginator<Product, int> _cursorPaginator;
 
         [GlobalSetup]
         public void Setup()
@@ -19,6 +25,10 @@ namespace CorePagination.Benchmarks
 
             _context.Products.AddRange(products);
             _context.SaveChanges();
+
+            _sizeAwarePaginator = new SizeAwarePaginator<Product>();
+            _simplePaginator = new SimplePaginator<Product>();
+            _cursorPaginator = new CursorPaginator<Product, int>(p => p.Id);
         }
 
         [Benchmark]
