@@ -6,7 +6,8 @@ namespace CorePagination.Benchmarks
     {
         public static void Main(string[] args)
         {
-            var summary = BenchmarkRunner.Run<PaginatorBenchmarks>();
+            var paginatorExtensionsSummary = BenchmarkRunner.Run<PaginatorExtensionsBenchmarks>();
+            var paginatorsSummary = BenchmarkRunner.Run<PaginatorBenchmarks>();
         }
     }
 }
