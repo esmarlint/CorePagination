@@ -4,16 +4,14 @@ using CorePagination.Paginators.Common;
 using CorePagination.Paginators.CursorPaginator;
 using CorePagination.Paginators.SimplePaginator;
 using CorePagination.Paginators.SizeAwarePaginator;
+using Microsoft.EntityFrameworkCore;
 
 namespace CorePagination.Benchmarks
 {
     [MemoryDiagnoser]
-    public class PaginatorBenchmarks
+    public class  PaginatorExtensionsBenchmarks
     {
         private BenchmarkDbContext _context;
-        private SizeAwarePaginator<Product> _sizeAwarePaginator;
-        private SimplePaginator<Product> _simplePaginator;
-        private CursorPaginator<Product, int> _cursorPaginator;
 
         [GlobalSetup]
         public void Setup()
@@ -27,11 +25,7 @@ namespace CorePagination.Benchmarks
             _context.Products.AddRange(products);
             _context.SaveChanges();
 
-            _sizeAwarePaginator = new SizeAwarePaginator<Product>();
-            _simplePaginator = new SimplePaginator<Product>();
-            _cursorPaginator = new CursorPaginator<Product, int>(p => p.Id);
         }
-
         [Benchmark]
         [Arguments(100, 10)]
         [Arguments(1000, 20)]
@@ -76,6 +70,33 @@ namespace CorePagination.Benchmarks
             var query = _context.Products.Take(totalItems);
             var result = query.SimplePaginate(1, pageSize);
         }
+    }
+
+    [MemoryDiagnoser]
+    public class PaginatorBenchmarks
+    {
+        private BenchmarkDbContext _context;
+        private SizeAwarePaginator<Product> _sizeAwarePaginator;
+        private SimplePaginator<Product> _simplePaginator;
+        private CursorPaginator<Product, int> _cursorPaginator;
+
+        [GlobalSetup]
+        public void Setup()
+        {
+            _context = new BenchmarkDbContext();
+
+            var products = Enumerable.Range(1, 10000)
+                .Select(i => new Product { Id = i, Name = $"Product {i}" })
+                .ToList();
+
+            _context.Products.AddRange(products);
+            _context.SaveChanges();
+
+            _sizeAwarePaginator = new SizeAwarePaginator<Product>();
+            _simplePaginator = new SimplePaginator<Product>();
+            _cursorPaginator = new CursorPaginator<Product, int>(p => p.Id);
+        }
+
 
         [Benchmark]
         [Arguments(100, 10)]
