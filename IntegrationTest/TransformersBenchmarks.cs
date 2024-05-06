@@ -1,16 +1,15 @@
 ﻿using BenchmarkDotNet.Attributes;
-using CorePagination.Extensions;
 using CorePagination.Paginators.Common;
 using CorePagination.Paginators.CursorPaginator;
 using CorePagination.Paginators.SimplePaginator;
 using CorePagination.Paginators.SizeAwarePaginator;
-using Microsoft.EntityFrameworkCore;
+using CorePagination.Tranformation.Transformers;
+using CorePagination.Tranformation.Extensions;
 
 namespace CorePagination.Benchmarks
 {
-
     [MemoryDiagnoser]
-    public class PaginatorBenchmarks
+    public class TransformersBenchmarks
     {
         private BenchmarkDbContext _context;
         private SizeAwarePaginator<Product> _sizeAwarePaginator;
@@ -34,74 +33,48 @@ namespace CorePagination.Benchmarks
             _cursorPaginator = new CursorPaginator<Product, int>(p => p.Id);
         }
 
-
         [Benchmark]
         [Arguments(100, 10)]
         [Arguments(1000, 20)]
-        public void CursorPaginate(int totalItems, int pageSize)
-        {
-            var query = _context.Products.Take(totalItems).OrderBy(p => p.Id);
-            var result = query.CursorPaginate(p => p.Id, pageSize);
-        }
-
-        [Benchmark]
-        [Arguments(100, 10)]
-        [Arguments(1000, 20)]
-        public async Task SizeAwarePaginatorAsync(int totalItems, int pageSize)
+        public async Task SizeAwarePaginatorWithTransformerAsync(int totalItems, int pageSize)
         {
             var query = _context.Products.Take(totalItems);
             var parameters = new PaginatorParameters { Page = 1, PageSize = pageSize };
-            var result = await _sizeAwarePaginator.PaginateAsync(query, parameters);
+            var paginationResult = await _sizeAwarePaginator.PaginateAsync(query, parameters);
+            var transformedResult = new SizeAwareUrlResultTransformer<Product>("/products").Transform(paginationResult);
         }
 
         [Benchmark]
         [Arguments(100, 10)]
         [Arguments(1000, 20)]
-        public async Task SimplePaginatorAsync(int totalItems, int pageSize)
+        public async Task SizeAwarePaginatorWithTransformerExtensionAsync(int totalItems, int pageSize)
         {
             var query = _context.Products.Take(totalItems);
             var parameters = new PaginatorParameters { Page = 1, PageSize = pageSize };
-            var result = await _simplePaginator.PaginateAsync(query, parameters);
+            var paginationResult = await _sizeAwarePaginator.PaginateAsync(query, parameters);
+            var transformedResult = paginationResult.WithUrl("/products");
         }
 
         [Benchmark]
         [Arguments(100, 10)]
         [Arguments(1000, 20)]
-        public async Task CursorPaginatorAsync(int totalItems, int pageSize)
+        public async Task CursorPaginatorWithTransformerAsync(int totalItems, int pageSize)
         {
             var query = _context.Products.Take(totalItems).OrderBy(p => p.Id);
             var parameters = new CursorPaginationParameters<int> { PageSize = pageSize };
-            var result = await _cursorPaginator.PaginateAsync(query, parameters);
+            var paginationResult = await _cursorPaginator.PaginateAsync(query, parameters);
+            var transformedResult = new CursorUrlResultTransformer<Product, int>("/products").Transform(paginationResult);
         }
 
         [Benchmark]
         [Arguments(100, 10)]
         [Arguments(1000, 20)]
-        public void SizeAwarePaginator(int totalItems, int pageSize)
-        {
-            var query = _context.Products.Take(totalItems);
-            var parameters = new PaginatorParameters { Page = 1, PageSize = pageSize };
-            var result = _sizeAwarePaginator.Paginate(query, parameters);
-        }
-
-        [Benchmark]
-        [Arguments(100, 10)]
-        [Arguments(1000, 20)]
-        public void SimplePaginator(int totalItems, int pageSize)
-        {
-            var query = _context.Products.Take(totalItems);
-            var parameters = new PaginatorParameters { Page = 1, PageSize = pageSize };
-            var result = _simplePaginator.Paginate(query, parameters);
-        }
-
-        [Benchmark]
-        [Arguments(100, 10)]
-        [Arguments(1000, 20)]
-        public void CursorPaginator(int totalItems, int pageSize)
+        public async Task CursorPaginatorWithTransformerExtensionAsync(int totalItems, int pageSize)
         {
             var query = _context.Products.Take(totalItems).OrderBy(p => p.Id);
             var parameters = new CursorPaginationParameters<int> { PageSize = pageSize };
-            var result = _cursorPaginator.Paginate(query, parameters);
+            var paginationResult = await _cursorPaginator.PaginateAsync(query, parameters);
+            var transformedResult = paginationResult.WithUrl<Product, int>("/products");
         }
     }
 }

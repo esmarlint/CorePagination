@@ -8,6 +8,7 @@ namespace CorePagination.Benchmarks
         {
             var paginatorExtensionsSummary = BenchmarkRunner.Run<PaginatorExtensionsBenchmarks>();
             var paginatorsSummary = BenchmarkRunner.Run<PaginatorBenchmarks>();
+            var transformersSummary = BenchmarkRunner.Run<TransformersBenchmarks>();
         }
     }
 }
