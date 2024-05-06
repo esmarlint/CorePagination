@@ -58,6 +58,28 @@ namespace CorePagination.Benchmarks
         [Benchmark]
         [Arguments(100, 10)]
         [Arguments(1000, 20)]
+        public async Task SimplePaginatorWithTransformerAsync(int totalItems, int pageSize)
+        {
+            var query = _context.Products.Take(totalItems);
+            var parameters = new PaginatorParameters { Page = 1, PageSize = pageSize };
+            var paginationResult = await _simplePaginator.PaginateAsync(query, parameters);
+            var transformedResult = new SimpleUrlResultTransformer<Product>("/products").Transform(paginationResult);
+        }
+
+        [Benchmark]
+        [Arguments(100, 10)]
+        [Arguments(1000, 20)]
+        public async Task SimplePaginatorWithTransformerExtensionAsync(int totalItems, int pageSize)
+        {
+            var query = _context.Products.Take(totalItems);
+            var parameters = new PaginatorParameters { Page = 1, PageSize = pageSize };
+            var paginationResult = await _simplePaginator.PaginateAsync(query, parameters);
+            var transformedResult = paginationResult.WithSimpleUrl("/products");
+        }
+
+        [Benchmark]
+        [Arguments(100, 10)]
+        [Arguments(1000, 20)]
         public async Task CursorPaginatorWithTransformerAsync(int totalItems, int pageSize)
         {
             var query = _context.Products.Take(totalItems).OrderBy(p => p.Id);
