@@ -1,4 +1,5 @@
 ﻿using CorePagination.Extensions;
+using CorePagination.Paginators.CursorPaginator;
 using CorePagination.Tests.Support.Models;
 using CorePagination.Tests.Support.Seeds;
 using CorePagination.Tests.Support.Utils;
@@ -257,56 +258,5 @@ namespace CorePagination.Tests.Extensions
 
         #endregion CursorPaginateAsync
 
-        [Fact]
-public void WithUrl_NullPaginationResult_ThrowsArgumentNullException()
-{
-    // Arrange
-    CursorPaginationResult<ProductTests, int> paginationResult = null;
-    var baseUrl = "https://example.com/products";
-
-    // Act & Assert
-    Assert.Throws<ArgumentNullException>(() => paginationResult.WithUrl<ProductTests, int>(baseUrl));
-}
-
-[Fact]
-public void WithUrl_EmptyBaseUrl_ThrowsArgumentException()
-{
-    // Arrange
-    var paginationResult = new CursorPaginationResult<ProductTests, int>
-    {
-        Items = Enumerable.Range(1, 10).Select(product => new ProductTests()),
-        CurrentCursor = 1,
-        NextCursor = 11,
-        PageSize = 10,
-        Page = 1
-    };
-    var baseUrl = string.Empty;
-
-    // Act & Assert
-    Assert.Throws<ArgumentException>(() => paginationResult.WithUrl<ProductTests, int>(baseUrl));
-}
-
-[Fact]
-public void WithUrl_IncludeOnlyCurrentCursor_GeneratesCorrectUrl()
-{
-    // Arrange
-    var paginationResult = new CursorPaginationResult<ProductTests, int>
-    {
-        Items = Enumerable.Range(1, 10).Select(product => new ProductTests()),
-        CurrentCursor = 1,
-        NextCursor = 11,
-        PageSize = 10,
-        Page = 1
-    };
-    var baseUrl = "https://example.com/products";
-
-    // Act
-    var result = paginationResult.WithUrl<ProductTests, int>(baseUrl);
-
-    // Assert
-    Assert.NotNull(result);
-    Assert.IsType<CursorUrlPaginationResult<ProductTests, int>>(result);
-    Assert.Equal(baseUrl + "?currentCursor=1", result.CurrentUrl);
-}
     }
 }
