@@ -4,7 +4,7 @@ using CorePagination.Extensions;
 namespace CorePagination.Benchmarks
 {
     [MemoryDiagnoser]
-    public class  PaginatorExtensionsBenchmarks
+    public class PaginatorExtensionsBenchmarks
     {
         private BenchmarkDbContext _context;
 
@@ -19,8 +19,10 @@ namespace CorePagination.Benchmarks
 
             _context.Products.AddRange(products);
             _context.SaveChanges();
-
         }
+
+        #region Asynchronous Pagination Benchmarks
+
         [Benchmark]
         [Arguments(100, 10)]
         [Arguments(1000, 20)]
@@ -48,6 +50,10 @@ namespace CorePagination.Benchmarks
             var result = await query.CursorPaginateAsync(p => p.Id, pageSize);
         }
 
+        #endregion
+
+        #region Synchronous Pagination Benchmarks
+
         [Benchmark]
         [Arguments(100, 10)]
         [Arguments(1000, 20)]
@@ -65,5 +71,16 @@ namespace CorePagination.Benchmarks
             var query = _context.Products.Take(totalItems);
             var result = query.SimplePaginate(1, pageSize);
         }
+
+        [Benchmark]
+        [Arguments(100, 10)]
+        [Arguments(1000, 20)]
+        public void CursorPaginate(int totalItems, int pageSize)
+        {
+            var query = _context.Products.Take(totalItems).OrderBy(p => p.Id);
+            var result = query.CursorPaginate(p => p.Id, pageSize);
+        }
+
+        #endregion
     }
 }
