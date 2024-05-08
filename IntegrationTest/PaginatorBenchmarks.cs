@@ -34,15 +34,7 @@ namespace CorePagination.Benchmarks
             _cursorPaginator = new CursorPaginator<Product, int>(p => p.Id);
         }
 
-
-        [Benchmark]
-        [Arguments(100, 10)]
-        [Arguments(1000, 20)]
-        public void CursorPaginate(int totalItems, int pageSize)
-        {
-            var query = _context.Products.Take(totalItems).OrderBy(p => p.Id);
-            var result = query.CursorPaginate(p => p.Id, pageSize);
-        }
+        #region SizeAwarePaginator Benchmarks
 
         [Benchmark]
         [Arguments(100, 10)]
@@ -57,12 +49,40 @@ namespace CorePagination.Benchmarks
         [Benchmark]
         [Arguments(100, 10)]
         [Arguments(1000, 20)]
+        public void SizeAwarePaginator(int totalItems, int pageSize)
+        {
+            var query = _context.Products.Take(totalItems);
+            var parameters = new PaginatorParameters { Page = 1, PageSize = pageSize };
+            var result = _sizeAwarePaginator.Paginate(query, parameters);
+        }
+
+        #endregion
+
+        #region SimplePaginator Benchmarks
+
+        [Benchmark]
+        [Arguments(100, 10)]
+        [Arguments(1000, 20)]
         public async Task SimplePaginatorAsync(int totalItems, int pageSize)
         {
             var query = _context.Products.Take(totalItems);
             var parameters = new PaginatorParameters { Page = 1, PageSize = pageSize };
             var result = await _simplePaginator.PaginateAsync(query, parameters);
         }
+
+        [Benchmark]
+        [Arguments(100, 10)]
+        [Arguments(1000, 20)]
+        public void SimplePaginator(int totalItems, int pageSize)
+        {
+            var query = _context.Products.Take(totalItems);
+            var parameters = new PaginatorParameters { Page = 1, PageSize = pageSize };
+            var result = _simplePaginator.Paginate(query, parameters);
+        }
+
+        #endregion
+
+        #region CursorPaginator Benchmarks
 
         [Benchmark]
         [Arguments(100, 10)]
@@ -77,31 +97,13 @@ namespace CorePagination.Benchmarks
         [Benchmark]
         [Arguments(100, 10)]
         [Arguments(1000, 20)]
-        public void SizeAwarePaginator(int totalItems, int pageSize)
-        {
-            var query = _context.Products.Take(totalItems);
-            var parameters = new PaginatorParameters { Page = 1, PageSize = pageSize };
-            var result = _sizeAwarePaginator.Paginate(query, parameters);
-        }
-
-        [Benchmark]
-        [Arguments(100, 10)]
-        [Arguments(1000, 20)]
-        public void SimplePaginator(int totalItems, int pageSize)
-        {
-            var query = _context.Products.Take(totalItems);
-            var parameters = new PaginatorParameters { Page = 1, PageSize = pageSize };
-            var result = _simplePaginator.Paginate(query, parameters);
-        }
-
-        [Benchmark]
-        [Arguments(100, 10)]
-        [Arguments(1000, 20)]
         public void CursorPaginator(int totalItems, int pageSize)
         {
             var query = _context.Products.Take(totalItems).OrderBy(p => p.Id);
             var parameters = new CursorPaginationParameters<int> { PageSize = pageSize };
             var result = _cursorPaginator.Paginate(query, parameters);
         }
+
+        #endregion
     }
 }
