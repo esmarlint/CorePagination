@@ -34,7 +34,7 @@ Simplify your pagination implementation with CorePagination today! 🎉
 - [Installation Guide](#installation-guide)
 - [CorePagination Usage Examples](#corepagination-usage-examples)
   - [Using `PaginateAsync`](#using-paginateasync)
-  - [Using `SimplePaginateAsync`](#using-simplepaginateasync)
+  - [Using `PaginateAsync`](#using-PaginateAsync)
   - [Using `CursorPaginateAsync`](#using-cursorpaginateasync)
 - [Paginators](#paginators)
   - [Using Paginators](#using-paginators)
@@ -149,7 +149,7 @@ var paginationResult = await products.PaginateAsync(pageNumber, pageSize);
 // PageSize: Number of items per page.
 ```
 
-### Example with `SimplePaginateAsync` and Search Filter
+### Example with `PaginateAsync` and Search Filter
 
 ```csharp
 var context = new ApplicationDbContext();
@@ -159,14 +159,14 @@ var filteredProducts = context.Products.Where(p => p.Name.Contains(searchTerm));
 int pageNumber = 1;
 int pageSize = 10;
 
-var paginationResult = await filteredProducts.SimplePaginateAsync(pageNumber, pageSize);
+var paginationResult = await filteredProducts.PaginateAsync(pageNumber, pageSize);
 ```
 
-### Using `SimplePaginateAsync`
+### Using `PaginateAsync`
 
-`SimplePaginateAsync` provides a basic pagination mechanism without the total count of items or pages, typically offering faster performance than PaginateAsync by eliminating the need for total count calculations.
+`PaginateAsync` provides a basic pagination mechanism without the total count of items or pages, typically offering faster performance than PaginateAsync by eliminating the need for total count calculations.
 
-#### Example with `SimplePaginateAsync`
+#### Example with `PaginateAsync`
 
 ```csharp
 var context = new ApplicationDbContext();
@@ -176,7 +176,7 @@ int pageNumber = 1;
 int pageSize = 10;
 
 //paginationResult: PaginationResult<Product>
-var paginationResult = await products.SimplePaginateAsync(pageNumber, pageSize);
+var paginationResult = await products.PaginateAsync(pageNumber, pageSize);
 
 // paginationResult includes:
 // Items: Current page's list of products.
@@ -482,14 +482,14 @@ The benchmark results are shown in the following table:
 | Method              | totalItems | pageSize | Mean     | Error     | StdDev    | Median   | Gen0     | Gen1     | Gen2    | Allocated  |
 |-------------------- |----------- |--------- |---------:|----------:|----------:|---------:|---------:|---------:|--------:|-----------:|
 | **PaginateAsync**       | **100**        | **10**       | **3.413 ms** | **0.0676 ms** | **0.1252 ms** | **3.392 ms** | **281.2500** | **203.1250** | **58.5938** | **1618.91 KB** |
-| SimplePaginateAsync | 100        | 10       | 1.731 ms | 0.0341 ms | 0.0490 ms | 1.727 ms | 140.6250 |  99.6094 | 29.2969 |  811.83 KB |
+| PaginateAsync | 100        | 10       | 1.731 ms | 0.0341 ms | 0.0490 ms | 1.727 ms | 140.6250 |  99.6094 | 29.2969 |  811.83 KB |
 | CursorPaginateAsync | 100        | 10       | 1.727 ms | 0.0317 ms | 0.0511 ms | 1.713 ms | 144.5313 | 107.4219 | 31.2500 |     820 KB |
 | Paginate            | 100        | 10       | 3.382 ms | 0.0670 ms | 0.1753 ms | 3.347 ms | 273.4375 | 203.1250 | 54.6875 |  1618.7 KB |
 | SimplePaginate      | 100        | 10       | 1.715 ms | 0.0335 ms | 0.0646 ms | 1.703 ms | 142.5781 | 105.4688 | 33.2031 |  811.68 KB |
 | CursorPaginate      | 100        | 10       | 1.772 ms | 0.0345 ms | 0.0909 ms | 1.744 ms | 144.5313 | 107.4219 | 33.2031 |  819.75 KB |
 | **Hardperformance** |
 | PaginateAsync       | 1000       | 20       | 3.388 ms | 0.0677 ms | 0.1074 ms | 3.376 ms | 285.1563 | 203.1250 | 62.5000 | 1622.41 KB |
-| SimplePaginateAsync | 1000       | 20       | 1.716 ms | 0.0343 ms | 0.0543 ms | 1.712 ms | 142.5781 | 103.5156 | 31.2500 |   815.3 KB |
+| PaginateAsync | 1000       | 20       | 1.716 ms | 0.0343 ms | 0.0543 ms | 1.712 ms | 142.5781 | 103.5156 | 31.2500 |   815.3 KB |
 | CursorPaginateAsync | 1000       | 20       | 1.804 ms | 0.0316 ms | 0.0280 ms | 1.807 ms | 148.4375 | 107.4219 | 31.2500 |  851.72 KB |
 | Paginate            | 1000       | 20       | 3.403 ms | 0.0666 ms | 0.0890 ms | 3.402 ms | 281.2500 | 207.0313 | 58.5938 | 1622.14 KB |
 | SimplePaginate      | 1000       | 20       | 1.681 ms | 0.0287 ms | 0.0282 ms | 1.686 ms | 144.5313 | 103.5156 | 33.2031 |  815.17 KB |
@@ -504,9 +504,9 @@ The benchmark results are shown in the following table:
 The benchmark results show that:
 
 - The `PaginateAsync` and `Paginate` methods have the highest execution times compared to other pagination methods.
-- The `SimplePaginateAsync`, `CursorPaginateAsync`, `SimplePaginate`, and `CursorPaginate` methods have lower and similar execution times among themselves.
+- The `PaginateAsync`, `CursorPaginateAsync`, `SimplePaginate`, and `CursorPaginate` methods have lower and similar execution times among themselves.
 - The `PaginateAsync` method has the highest memory consumption in terms of allocated memory compared to other methods.
-- The asynchronous pagination methods (`PaginateAsync`, `SimplePaginateAsync`, `CursorPaginateAsync`) have slightly higher memory consumption than their synchronous counterparts.
+- The asynchronous pagination methods (`PaginateAsync`, `PaginateAsync`, `CursorPaginateAsync`) have slightly higher memory consumption than their synchronous counterparts.
 
 These results provide valuable insights into the performance of different pagination methods in CorePagination and can help make informed decisions about which method to use based on the application's performance and resource usage requirements.
 
