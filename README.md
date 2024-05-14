@@ -33,7 +33,7 @@ Simplify your pagination implementation with CorePagination today! 🎉
 - [Features](#features)
 - [Installation Guide](#installation-guide)
 - [CorePagination Usage Examples](#corepagination-usage-examples)
-  - [Using `PaginateAsync`](#using-paginateasync)
+  - [Using `PaginateAndCountAsync`](#using-PaginateAndCountAsync)
   - [Using `PaginateAsync`](#using-PaginateAsync)
   - [Using `PaginateCursorAsync`](#using-PaginateCursorAsync)
 - [Paginators](#paginators)
@@ -123,13 +123,13 @@ Import the CorePagination.Extensions namespace to get started:
 using CorePagination.Extensions;
 ```
 
-## Using `PaginateAsync`
+## Using `PaginateAndCountAsync`
 
-`PaginateAsync` is a comprehensive pagination method that provides detailed pagination results, including total item and page counts. It is particularly useful for user interfaces that require detailed pagination controls.
+`PaginateAndCountAsync` is a comprehensive pagination method that provides detailed pagination results, including total item and page counts. It is particularly useful for user interfaces that require detailed pagination controls.
 
-### Example with `PaginateAsync`
+### Example with `PaginateAndCountAsync`
 
-Below is an example demonstrating how to use `PaginateAsync` to paginate a list of `Product` entities:
+Below is an example demonstrating how to use `PaginateAndCountAsync` to paginate a list of `Product` entities:
 
 ```csharp
 var context = new ApplicationDbContext();
@@ -139,7 +139,7 @@ int pageNumber = 1;
 int pageSize = 10;
 
 //paginationResult: SizeAwarePaginationResult<Product>
-var paginationResult = await products.PaginateAsync(pageNumber, pageSize);
+var paginationResult = await products.PaginateAndCountAsync(pageNumber, pageSize);
 
 // paginationResult includes:
 // Items: List of products on the current page.
@@ -332,7 +332,7 @@ var context = new ApplicationDbContext();
 var products = context.Products;
 string baseUrl = "http://example.com/products";
 
-var paginationResult = await products.PaginateAsync(pageNumber, pageSize);
+var paginationResult = await products.PaginateAndCountAsync(pageNumber, pageSize);
 var urlPaginationResult = paginationResult.Transform(new UrlResultTransformer<Product>(baseUrl));
 ```
 
@@ -345,7 +345,7 @@ Inline transformations allow you to apply custom transformations directly within
 #### Example: Inline Transformation
 
 ```csharp
-var paginationResult = await products.PaginateAsync(pageNumber, pageSize);
+var paginationResult = await products.PaginateAndCountAsync(pageNumber, pageSize);
 var customResult = paginationResult.Transform(result => new {
     SimpleItems = result.Items.Select(item => new { item.Id, item.Name }),
     result.Page,
@@ -479,21 +479,21 @@ Benchmarks were conducted to evaluate the performance of different pagination me
 
 The benchmark results are shown in the following table:
 
-| Method              | totalItems | pageSize | Mean     | Error     | StdDev    | Median   | Gen0     | Gen1     | Gen2    | Allocated  |
-|-------------------- |----------- |--------- |---------:|----------:|----------:|---------:|---------:|---------:|--------:|-----------:|
-| **PaginateAsync**       | **100**        | **10**       | **3.413 ms** | **0.0676 ms** | **0.1252 ms** | **3.392 ms** | **281.2500** | **203.1250** | **58.5938** | **1618.91 KB** |
-| PaginateAsync | 100        | 10       | 1.731 ms | 0.0341 ms | 0.0490 ms | 1.727 ms | 140.6250 |  99.6094 | 29.2969 |  811.83 KB |
-| PaginateCursorAsync | 100        | 10       | 1.727 ms | 0.0317 ms | 0.0511 ms | 1.713 ms | 144.5313 | 107.4219 | 31.2500 |     820 KB |
-| Paginate            | 100        | 10       | 3.382 ms | 0.0670 ms | 0.1753 ms | 3.347 ms | 273.4375 | 203.1250 | 54.6875 |  1618.7 KB |
-| Paginate      | 100        | 10       | 1.715 ms | 0.0335 ms | 0.0646 ms | 1.703 ms | 142.5781 | 105.4688 | 33.2031 |  811.68 KB |
-| PaginateCursor      | 100        | 10       | 1.772 ms | 0.0345 ms | 0.0909 ms | 1.744 ms | 144.5313 | 107.4219 | 33.2031 |  819.75 KB |
+| Method              | totalItems | pageSize |         Mean |         Error |        StdDev |       Median |         Gen0 |         Gen1 |        Gen2 |      Allocated |
+| ------------------- | ---------- | -------- | -----------: | ------------: | ------------: | -----------: | -----------: | -----------: | ----------: | -------------: |
+| **PaginateAsync**   | **100**    | **10**   | **3.413 ms** | **0.0676 ms** | **0.1252 ms** | **3.392 ms** | **281.2500** | **203.1250** | **58.5938** | **1618.91 KB** |
+| PaginateAsync       | 100        | 10       |     1.731 ms |     0.0341 ms |     0.0490 ms |     1.727 ms |     140.6250 |      99.6094 |     29.2969 |      811.83 KB |
+| PaginateCursorAsync | 100        | 10       |     1.727 ms |     0.0317 ms |     0.0511 ms |     1.713 ms |     144.5313 |     107.4219 |     31.2500 |         820 KB |
+| Paginate            | 100        | 10       |     3.382 ms |     0.0670 ms |     0.1753 ms |     3.347 ms |     273.4375 |     203.1250 |     54.6875 |      1618.7 KB |
+| Paginate            | 100        | 10       |     1.715 ms |     0.0335 ms |     0.0646 ms |     1.703 ms |     142.5781 |     105.4688 |     33.2031 |      811.68 KB |
+| PaginateCursor      | 100        | 10       |     1.772 ms |     0.0345 ms |     0.0909 ms |     1.744 ms |     144.5313 |     107.4219 |     33.2031 |      819.75 KB |
 | **Hardperformance** |
-| PaginateAsync       | 1000       | 20       | 3.388 ms | 0.0677 ms | 0.1074 ms | 3.376 ms | 285.1563 | 203.1250 | 62.5000 | 1622.41 KB |
-| PaginateAsync | 1000       | 20       | 1.716 ms | 0.0343 ms | 0.0543 ms | 1.712 ms | 142.5781 | 103.5156 | 31.2500 |   815.3 KB |
-| PaginateCursorAsync | 1000       | 20       | 1.804 ms | 0.0316 ms | 0.0280 ms | 1.807 ms | 148.4375 | 107.4219 | 31.2500 |  851.72 KB |
-| Paginate            | 1000       | 20       | 3.403 ms | 0.0666 ms | 0.0890 ms | 3.402 ms | 281.2500 | 207.0313 | 58.5938 | 1622.14 KB |
-| Paginate      | 1000       | 20       | 1.681 ms | 0.0287 ms | 0.0282 ms | 1.686 ms | 144.5313 | 103.5156 | 33.2031 |  815.17 KB |
-| PaginateCursor      | 1000       | 20       | 1.809 ms | 0.0358 ms | 0.0383 ms | 1.802 ms | 146.4844 | 105.4688 | 29.2969 |  851.52 KB |
+| PaginateAsync       | 1000       | 20       |     3.388 ms |     0.0677 ms |     0.1074 ms |     3.376 ms |     285.1563 |     203.1250 |     62.5000 |     1622.41 KB |
+| PaginateAsync       | 1000       | 20       |     1.716 ms |     0.0343 ms |     0.0543 ms |     1.712 ms |     142.5781 |     103.5156 |     31.2500 |       815.3 KB |
+| PaginateCursorAsync | 1000       | 20       |     1.804 ms |     0.0316 ms |     0.0280 ms |     1.807 ms |     148.4375 |     107.4219 |     31.2500 |      851.72 KB |
+| Paginate            | 1000       | 20       |     3.403 ms |     0.0666 ms |     0.0890 ms |     3.402 ms |     281.2500 |     207.0313 |     58.5938 |     1622.14 KB |
+| Paginate            | 1000       | 20       |     1.681 ms |     0.0287 ms |     0.0282 ms |     1.686 ms |     144.5313 |     103.5156 |     33.2031 |      815.17 KB |
+| PaginateCursor      | 1000       | 20       |     1.809 ms |     0.0358 ms |     0.0383 ms |     1.802 ms |     146.4844 |     105.4688 |     29.2969 |      851.52 KB |
 
 ### Benchmark Results Graph
 
@@ -509,7 +509,6 @@ The benchmark results show that:
 - The asynchronous pagination methods (`PaginateAsync`, `PaginateAsync`, `PaginateCursorAsync`) have slightly higher memory consumption than their synchronous counterparts.
 
 These results provide valuable insights into the performance of different pagination methods in CorePagination and can help make informed decisions about which method to use based on the application's performance and resource usage requirements.
-
 
 ## Upcoming Changes
 
