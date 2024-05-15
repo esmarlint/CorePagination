@@ -33,9 +33,9 @@ Simplify your pagination implementation with CorePagination today! 🎉
 - [Features](#features)
 - [Installation Guide](#installation-guide)
 - [CorePagination Usage Examples](#corepagination-usage-examples)
-  - [Using `PaginateAsync`](#using-paginateasync)
-  - [Using `SimplePaginateAsync`](#using-simplepaginateasync)
-  - [Using `CursorPaginateAsync`](#using-cursorpaginateasync)
+  - [Using `PaginateAndCountAsync`](#using-PaginateAndCountAsync)
+  - [Using `PaginateAsync`](#using-PaginateAsync)
+  - [Using `PaginateCursorAsync`](#using-PaginateCursorAsync)
 - [Paginators](#paginators)
   - [Using Paginators](#using-paginators)
   - [SimplePaginator](#simplepaginator)
@@ -123,13 +123,13 @@ Import the CorePagination.Extensions namespace to get started:
 using CorePagination.Extensions;
 ```
 
-## Using `PaginateAsync`
+## Using `PaginateAndCountAsync`
 
-`PaginateAsync` is a comprehensive pagination method that provides detailed pagination results, including total item and page counts. It is particularly useful for user interfaces that require detailed pagination controls.
+`PaginateAndCountAsync` is a comprehensive pagination method that provides detailed pagination results, including total item and page counts. It is particularly useful for user interfaces that require detailed pagination controls.
 
-### Example with `PaginateAsync`
+### Example with `PaginateAndCountAsync`
 
-Below is an example demonstrating how to use `PaginateAsync` to paginate a list of `Product` entities:
+Below is an example demonstrating how to use `PaginateAndCountAsync` to paginate a list of `Product` entities:
 
 ```csharp
 var context = new ApplicationDbContext();
@@ -139,7 +139,7 @@ int pageNumber = 1;
 int pageSize = 10;
 
 //paginationResult: SizeAwarePaginationResult<Product>
-var paginationResult = await products.PaginateAsync(pageNumber, pageSize);
+var paginationResult = await products.PaginateAndCountAsync(pageNumber, pageSize);
 
 // paginationResult includes:
 // Items: List of products on the current page.
@@ -149,7 +149,7 @@ var paginationResult = await products.PaginateAsync(pageNumber, pageSize);
 // PageSize: Number of items per page.
 ```
 
-### Example with `SimplePaginateAsync` and Search Filter
+### Example with `PaginateAsync` and Search Filter
 
 ```csharp
 var context = new ApplicationDbContext();
@@ -159,14 +159,14 @@ var filteredProducts = context.Products.Where(p => p.Name.Contains(searchTerm));
 int pageNumber = 1;
 int pageSize = 10;
 
-var paginationResult = await filteredProducts.SimplePaginateAsync(pageNumber, pageSize);
+var paginationResult = await filteredProducts.PaginateAsync(pageNumber, pageSize);
 ```
 
-### Using `SimplePaginateAsync`
+### Using `PaginateAsync`
 
-`SimplePaginateAsync` provides a basic pagination mechanism without the total count of items or pages, typically offering faster performance than PaginateAsync by eliminating the need for total count calculations.
+`PaginateAsync` provides a basic pagination mechanism without the total count of items or pages, typically offering faster performance than PaginateAsync by eliminating the need for total count calculations.
 
-#### Example with `SimplePaginateAsync`
+#### Example with `PaginateAsync`
 
 ```csharp
 var context = new ApplicationDbContext();
@@ -176,7 +176,7 @@ int pageNumber = 1;
 int pageSize = 10;
 
 //paginationResult: PaginationResult<Product>
-var paginationResult = await products.SimplePaginateAsync(pageNumber, pageSize);
+var paginationResult = await products.PaginateAsync(pageNumber, pageSize);
 
 // paginationResult includes:
 // Items: Current page's list of products.
@@ -184,11 +184,11 @@ var paginationResult = await products.SimplePaginateAsync(pageNumber, pageSize);
 // PageSize: Number of items per page.
 ```
 
-### Using `CursorPaginateAsync`
+### Using `PaginateCursorAsync`
 
-`CursorPaginateAsync` is ideal for efficient and stateful pagination, such as infinite scrolling.
+`PaginateCursorAsync` is ideal for efficient and stateful pagination, such as infinite scrolling.
 
-#### Example with `CursorPaginateAsync`
+#### Example with `PaginateCursorAsync`
 
 ```csharp
 var context = new ApplicationDbContext();
@@ -197,7 +197,7 @@ var products = context.Products.OrderBy(p => p.Id);
 int pageSize = 10;
 int? currentCursorId = null;
 
-var paginationResult = await products.CursorPaginateAsync(
+var paginationResult = await products.PaginateCursorAsync(
     p => p.Id, pageSize, currentCursorId, PaginationOrder.Ascending);
 
 // paginationResult includes:
@@ -206,7 +206,7 @@ var paginationResult = await products.CursorPaginateAsync(
 // Cursor: Current cursor position.
 ```
 
-#### Example with `CursorPaginateAsync` and Date-Based Cursor
+#### Example with `PaginateCursorAsync` and Date-Based Cursor
 
 ```csharp
 var context = new ApplicationDbContext();
@@ -215,7 +215,7 @@ var products = context.Products.OrderByDescending(p => p.CreatedAt);
 
 int pageSize = 20;
 
-var paginationResult = await products.CursorPaginateAsync(
+var paginationResult = await products.PaginateCursorAsync(
     p => p.CreatedAt, pageSize, currentCursor, PaginationOrder.Descending);
 ```
 
@@ -332,7 +332,7 @@ var context = new ApplicationDbContext();
 var products = context.Products;
 string baseUrl = "http://example.com/products";
 
-var paginationResult = await products.PaginateAsync(pageNumber, pageSize);
+var paginationResult = await products.PaginateAndCountAsync(pageNumber, pageSize);
 var urlPaginationResult = paginationResult.Transform(new UrlResultTransformer<Product>(baseUrl));
 ```
 
@@ -345,7 +345,7 @@ Inline transformations allow you to apply custom transformations directly within
 #### Example: Inline Transformation
 
 ```csharp
-var paginationResult = await products.PaginateAsync(pageNumber, pageSize);
+var paginationResult = await products.PaginateAndCountAsync(pageNumber, pageSize);
 var customResult = paginationResult.Transform(result => new {
     SimpleItems = result.Items.Select(item => new { item.Id, item.Name }),
     result.Page,
@@ -463,53 +463,82 @@ In this example, instead of providing a complete base URL, only the relative pat
 #### Example with cursor-based pagination
 
 ```csharp
-var urlPaginationResult = await products.CursorPaginateAsync(p => p.Id, pageSize, currentCursor)
+var urlPaginationResult = await products.PaginateCursorAsync(p => p.Id, pageSize, currentCursor)
                                          .WithUrl("/products")
 ```
 
-In this example, cursor-based pagination is used with the `CursorPaginateAsync` method. The `WithUrl` extension method is then applied directly on the pagination result, providing only the relative path `/products`. Additional options, such as including the current and next cursor values, are configured using the fluent API.
+In this example, cursor-based pagination is used with the `PaginateCursorAsync` method. The `WithUrl` extension method is then applied directly on the pagination result, providing only the relative path `/products`. Additional options, such as including the current and next cursor values, are configured using the fluent API.
 
 By leveraging the URL transformation extensions and customizing the transformers using the fluent API, you can easily enhance your pagination results with navigational links that fit your API's requirements and improve the overall developer experience.
 
 ## Benchmarks
 
-Benchmarks were conducted to evaluate the performance of different pagination methods in CorePagination. The results were obtained using BenchmarkDotNet v0.13.12 on a Windows 10 environment with an AMD Ryzen 5 3400G processor.
+Benchmarks were conducted to evaluate the performance of different pagination methods in CorePagination. The results were obtained using:
+
+```
+
+BenchmarkDotNet v0.13.12, Windows 10 (10.0.19045.4291/22H2/2022Update)
+AMD Ryzen 5 3400G with Radeon Vega Graphics, 1 CPU, 8 logical and 4 physical cores
+.NET SDK 8.0.204
+  [Host]     : .NET 7.0.18 (7.0.1824.16914), X64 RyuJIT AVX2 [AttachedDebugger]
+  DefaultJob : .NET 7.0.18 (7.0.1824.16914), X64 RyuJIT AVX2
+
+
+```
 
 ### Results
 
-The benchmark results are shown in the following table:
+#### Asynchronous Methods
 
-| Method              | totalItems | pageSize | Mean     | Error     | StdDev    | Median   | Gen0     | Gen1     | Gen2    | Allocated  |
-|-------------------- |----------- |--------- |---------:|----------:|----------:|---------:|---------:|---------:|--------:|-----------:|
-| **PaginateAsync**       | **100**        | **10**       | **3.413 ms** | **0.0676 ms** | **0.1252 ms** | **3.392 ms** | **281.2500** | **203.1250** | **58.5938** | **1618.91 KB** |
-| SimplePaginateAsync | 100        | 10       | 1.731 ms | 0.0341 ms | 0.0490 ms | 1.727 ms | 140.6250 |  99.6094 | 29.2969 |  811.83 KB |
-| CursorPaginateAsync | 100        | 10       | 1.727 ms | 0.0317 ms | 0.0511 ms | 1.713 ms | 144.5313 | 107.4219 | 31.2500 |     820 KB |
-| Paginate            | 100        | 10       | 3.382 ms | 0.0670 ms | 0.1753 ms | 3.347 ms | 273.4375 | 203.1250 | 54.6875 |  1618.7 KB |
-| SimplePaginate      | 100        | 10       | 1.715 ms | 0.0335 ms | 0.0646 ms | 1.703 ms | 142.5781 | 105.4688 | 33.2031 |  811.68 KB |
-| CursorPaginate      | 100        | 10       | 1.772 ms | 0.0345 ms | 0.0909 ms | 1.744 ms | 144.5313 | 107.4219 | 33.2031 |  819.75 KB |
-| **Hardperformance** |
-| PaginateAsync       | 1000       | 20       | 3.388 ms | 0.0677 ms | 0.1074 ms | 3.376 ms | 285.1563 | 203.1250 | 62.5000 | 1622.41 KB |
-| SimplePaginateAsync | 1000       | 20       | 1.716 ms | 0.0343 ms | 0.0543 ms | 1.712 ms | 142.5781 | 103.5156 | 31.2500 |   815.3 KB |
-| CursorPaginateAsync | 1000       | 20       | 1.804 ms | 0.0316 ms | 0.0280 ms | 1.807 ms | 148.4375 | 107.4219 | 31.2500 |  851.72 KB |
-| Paginate            | 1000       | 20       | 3.403 ms | 0.0666 ms | 0.0890 ms | 3.402 ms | 281.2500 | 207.0313 | 58.5938 | 1622.14 KB |
-| SimplePaginate      | 1000       | 20       | 1.681 ms | 0.0287 ms | 0.0282 ms | 1.686 ms | 144.5313 | 103.5156 | 33.2031 |  815.17 KB |
-| CursorPaginate      | 1000       | 20       | 1.809 ms | 0.0358 ms | 0.0383 ms | 1.802 ms | 146.4844 | 105.4688 | 29.2969 |  851.52 KB |
+| Method                | totalItems | pageSize | Mean (ms) | Error (ms) | StdDev (ms) | Median (ms) |     Gen0 | Allocated (KB) |
+| --------------------- | ---------- | -------- | --------: | ---------: | ----------: | ----------: | -------: | -------------: |
+| PaginateAsync         | 100        | 10       |     1.948 |     0.1131 |      0.3317 |       1.802 | 140.6250 |         811.82 |
+| PaginateAndCountAsync | 100        | 10       |     3.366 |     0.0673 |      0.1106 |       3.365 | 281.2500 |        1618.95 |
+| CursorPaginateAsync   | 100        | 10       |     1.881 |     0.0598 |      0.1656 |       1.842 | 144.5313 |         819.97 |
+|                       |            |          |           |            |             |             |          |                |
+| PaginateAsync         | 1000       | 20       |     1.714 |     0.0330 |      0.0666 |       1.709 | 142.5781 |          815.3 |
+| PaginateAndCountAsync | 1000       | 20       |     3.431 |     0.0614 |      0.0956 |       3.435 | 285.1563 |        1622.38 |
+| CursorPaginateAsync   | 1000       | 20       |     1.788 |     0.0333 |      0.0278 |       1.783 | 148.4375 |         851.71 |
+
+#### Synchronous Methods
+
+| Method           | totalItems | pageSize | Mean (ms) | Error (ms) | StdDev (ms) | Median (ms) |     Gen0 | Allocated (KB) |
+| ---------------- | ---------- | -------- | --------: | ---------: | ----------: | ----------: | -------: | -------------: |
+| Paginate         | 100        | 10       |     1.722 |     0.0340 |      0.0834 |       1.710 | 144.5313 |          811.7 |
+| PaginateAndCount | 100        | 10       |     3.334 |     0.0624 |      0.1433 |       3.350 | 273.4375 |        1618.64 |
+| CursorPaginate   | 100        | 10       |     1.784 |     0.0418 |      0.1200 |       1.753 | 142.5781 |         819.79 |
+|                  |            |          |           |            |             |             |          |                |
+| Paginate         | 1000       | 20       |     1.689 |     0.0325 |      0.0434 |       1.678 | 146.4844 |         815.16 |
+| PaginateAndCount | 1000       | 20       |     3.435 |     0.0686 |      0.0642 |       3.420 | 281.2500 |        1622.15 |
+| CursorPaginate   | 1000       | 20       |     1.838 |     0.0354 |      0.0408 |       1.824 | 148.4375 |         851.51 |
 
 ### Benchmark Results Graph
 
 ![Benchmark Results](docs/images/benchmarkresult.png)
+
+These results provide valuable insights into the performance of different pagination methods in CorePagination and can help make informed decisions about which method to use based on the application's performance and resource usage requirements.
 
 ### Analysis
 
 The benchmark results show that:
 
 - The `PaginateAsync` and `Paginate` methods have the highest execution times compared to other pagination methods.
-- The `SimplePaginateAsync`, `CursorPaginateAsync`, `SimplePaginate`, and `CursorPaginate` methods have lower and similar execution times among themselves.
+- The `PaginateAsync`, `PaginateCursorAsync`, `Paginate`, and `PaginateCursor` methods have lower and similar execution times among themselves.
 - The `PaginateAsync` method has the highest memory consumption in terms of allocated memory compared to other methods.
-- The asynchronous pagination methods (`PaginateAsync`, `SimplePaginateAsync`, `CursorPaginateAsync`) have slightly higher memory consumption than their synchronous counterparts.
+- The asynchronous pagination methods (`PaginateAsync`, `PaginateAsync`, `PaginateCursorAsync`) have slightly higher memory consumption than their synchronous counterparts.
 
-These results provide valuable insights into the performance of different pagination methods in CorePagination and can help make informed decisions about which method to use based on the application's performance and resource usage requirements.
+### Summary
 
+- **Asynchronous Methods**:
+
+  - **PaginateAsync**: Generally more efficient in time and memory compared to other asynchronous methods.
+  - **CursorPaginateAsync**: Similar performance to PaginateAsync with a slight increase in allocated memory.
+  - **PaginateAndCountAsync**: The slowest and most memory-consuming due to additional counting operations.
+
+- **Synchronous Methods**:
+  - **Paginate**: The fastest method and most memory-efficient.
+  - **CursorPaginate**: Slightly slower than Paginate but similar in memory usage.
+  - **PaginateAndCount**: Similar to its asynchronous counterpart, it's slower and consumes more memory.
 
 ## Upcoming Changes
 

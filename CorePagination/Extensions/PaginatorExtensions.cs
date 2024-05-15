@@ -14,6 +14,9 @@ using System.Threading.Tasks;
 
 namespace CorePagination.Extensions
 {
+    /// <summary>
+    /// Provides extension methods to paginate queryable sources.
+    /// </summary>
     public static class PaginatorExtensions
     {
         /// <summary>
@@ -26,7 +29,7 @@ namespace CorePagination.Extensions
         /// <returns>A <see cref="PaginationResult{T}"/> containing the paginated result.</returns>
         /// <exception cref="ArgumentNullException">Thrown if the query is null.</exception>
         /// <exception cref="ArgumentOutOfRangeException">Thrown if pageNumber or pageSize is less than one.</exception>
-        public static PaginationResult<T> SimplePaginate<T>(this IQueryable<T> query, int pageNumber, int pageSize)
+        public static PaginationResult<T> Paginate<T>(this IQueryable<T> query, int pageNumber, int pageSize)
         {
             Guard.NotNull(query, nameof(query));
             Guard.GreaterThanZero(pageNumber, nameof(pageNumber));
@@ -52,7 +55,7 @@ namespace CorePagination.Extensions
         /// <returns>A <see cref="SizeAwarePaginationResult{T}"/> containing the paginated result with total counts.</returns>
         /// <exception cref="ArgumentNullException">Thrown if the query is null.</exception>
         /// <exception cref="ArgumentOutOfRangeException">Thrown if pageNumber or pageSize is less than one.</exception>
-        public static SizeAwarePaginationResult<T> Paginate<T>(this IQueryable<T> query, int pageNumber, int pageSize)
+        public static SizeAwarePaginationResult<T> PaginateAndCount<T>(this IQueryable<T> query, int pageNumber, int pageSize)
         {
             Guard.NotNull(query, nameof(query));
             Guard.GreaterThanZero(pageNumber, nameof(pageNumber));
@@ -84,7 +87,7 @@ namespace CorePagination.Extensions
         /// <param name="order">The pagination order. Default is <see cref="PaginationOrder.Ascending"/>.</param>
         /// <returns>A <see cref="CursorPaginationResult{T, TKey}"/> containing the paginated result with cursor information.</returns>
         /// <exception cref="ArgumentNullException">Thrown if the query or keySelector is null.</exception>
-        public static CursorPaginationResult<T, TKey> CursorPaginate<T, TKey>(
+        public static CursorPaginationResult<T, TKey> PaginateCursor<T, TKey>(
             this IQueryable<T> query, Expression<Func<T, TKey>> keySelector, int pageSize, TKey currentCursor = default, PaginationOrder order = PaginationOrder.Ascending)
             where T : class
             where TKey : IComparable
@@ -108,7 +111,7 @@ namespace CorePagination.Extensions
         /// <returns>A task that represents the asynchronous operation. The task result contains the <see cref="PaginationResult{T}"/>.</returns>
         /// <exception cref="ArgumentNullException">Thrown if the query is null.</exception>
         /// <exception cref="ArgumentOutOfRangeException">Thrown if pageNumber or pageSize are less than one.</exception>
-        public static async Task<PaginationResult<T>> SimplePaginateAsync<T>(
+        public static async Task<PaginationResult<T>> PaginateAsync<T>(
             this IQueryable<T> query, int pageNumber, int pageSize)
         {
             Guard.NotNull(query, nameof(query));
@@ -135,7 +138,7 @@ namespace CorePagination.Extensions
         /// <returns>A task that represents the asynchronous operation. The task result contains the <see cref="SizeAwarePaginationResult{T}"/>.</returns>
         /// <exception cref="ArgumentNullException">Thrown if the query is null.</exception>
         /// <exception cref="ArgumentOutOfRangeException">Thrown if pageNumber or pageSize are less than one.</exception>
-        public static async Task<SizeAwarePaginationResult<T>> PaginateAsync<T>(
+        public static async Task<SizeAwarePaginationResult<T>> PaginateAndCountAsync<T>(
             this IQueryable<T> query, int pageNumber, int pageSize)
         {
             Guard.NotNull(query, nameof(query));
@@ -167,7 +170,7 @@ namespace CorePagination.Extensions
         /// <returns>A task that represents the asynchronous operation. The task result contains the <see cref="CursorPaginationResult{T, TKey}"/>, 
         /// which includes the set of items for the current page, the current cursor, and an indication if more items are available.</returns>
         /// <exception cref="ArgumentNullException">Thrown if the query is null or if the parameters are null.</exception>
-        public static async Task<CursorPaginationResult<T, TKey>> CursorPaginateAsync<T, TKey>(
+        public static async Task<CursorPaginationResult<T, TKey>> PaginateCursorAsync<T, TKey>(
             this IQueryable<T> query, Expression<Func<T, TKey>> keySelector, int pageSize, TKey currentCursor = default, PaginationOrder order = PaginationOrder.Ascending)
             where T : class
             where TKey : IComparable
