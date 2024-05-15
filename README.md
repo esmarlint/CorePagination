@@ -473,31 +473,50 @@ By leveraging the URL transformation extensions and customizing the transformers
 
 ## Benchmarks
 
-Benchmarks were conducted to evaluate the performance of different pagination methods in CorePagination. The results were obtained using BenchmarkDotNet v0.13.12 on a Windows 10 environment with an AMD Ryzen 5 3400G processor.
+Benchmarks were conducted to evaluate the performance of different pagination methods in CorePagination. The results were obtained using:
+
+```
+
+BenchmarkDotNet v0.13.12, Windows 10 (10.0.19045.4291/22H2/2022Update)
+AMD Ryzen 5 3400G with Radeon Vega Graphics, 1 CPU, 8 logical and 4 physical cores
+.NET SDK 8.0.204
+  [Host]     : .NET 7.0.18 (7.0.1824.16914), X64 RyuJIT AVX2 [AttachedDebugger]
+  DefaultJob : .NET 7.0.18 (7.0.1824.16914), X64 RyuJIT AVX2
+
+
+```
 
 ### Results
 
-The benchmark results are shown in the following table:
+#### Asynchronous Methods
 
-| Method              | totalItems | pageSize |         Mean |         Error |        StdDev |       Median |         Gen0 |         Gen1 |        Gen2 |      Allocated |
-| ------------------- | ---------- | -------- | -----------: | ------------: | ------------: | -----------: | -----------: | -----------: | ----------: | -------------: |
-| **PaginateAsync**   | **100**    | **10**   | **3.413 ms** | **0.0676 ms** | **0.1252 ms** | **3.392 ms** | **281.2500** | **203.1250** | **58.5938** | **1618.91 KB** |
-| PaginateAsync       | 100        | 10       |     1.731 ms |     0.0341 ms |     0.0490 ms |     1.727 ms |     140.6250 |      99.6094 |     29.2969 |      811.83 KB |
-| PaginateCursorAsync | 100        | 10       |     1.727 ms |     0.0317 ms |     0.0511 ms |     1.713 ms |     144.5313 |     107.4219 |     31.2500 |         820 KB |
-| Paginate            | 100        | 10       |     3.382 ms |     0.0670 ms |     0.1753 ms |     3.347 ms |     273.4375 |     203.1250 |     54.6875 |      1618.7 KB |
-| Paginate            | 100        | 10       |     1.715 ms |     0.0335 ms |     0.0646 ms |     1.703 ms |     142.5781 |     105.4688 |     33.2031 |      811.68 KB |
-| PaginateCursor      | 100        | 10       |     1.772 ms |     0.0345 ms |     0.0909 ms |     1.744 ms |     144.5313 |     107.4219 |     33.2031 |      819.75 KB |
-| **Hardperformance** |
-| PaginateAsync       | 1000       | 20       |     3.388 ms |     0.0677 ms |     0.1074 ms |     3.376 ms |     285.1563 |     203.1250 |     62.5000 |     1622.41 KB |
-| PaginateAsync       | 1000       | 20       |     1.716 ms |     0.0343 ms |     0.0543 ms |     1.712 ms |     142.5781 |     103.5156 |     31.2500 |       815.3 KB |
-| PaginateCursorAsync | 1000       | 20       |     1.804 ms |     0.0316 ms |     0.0280 ms |     1.807 ms |     148.4375 |     107.4219 |     31.2500 |      851.72 KB |
-| Paginate            | 1000       | 20       |     3.403 ms |     0.0666 ms |     0.0890 ms |     3.402 ms |     281.2500 |     207.0313 |     58.5938 |     1622.14 KB |
-| Paginate            | 1000       | 20       |     1.681 ms |     0.0287 ms |     0.0282 ms |     1.686 ms |     144.5313 |     103.5156 |     33.2031 |      815.17 KB |
-| PaginateCursor      | 1000       | 20       |     1.809 ms |     0.0358 ms |     0.0383 ms |     1.802 ms |     146.4844 |     105.4688 |     29.2969 |      851.52 KB |
+| Method                | totalItems | pageSize | Mean (ms) | Error (ms) | StdDev (ms) | Median (ms) |     Gen0 | Allocated (KB) |
+| --------------------- | ---------- | -------- | --------: | ---------: | ----------: | ----------: | -------: | -------------: |
+| PaginateAsync         | 100        | 10       |     1.948 |     0.1131 |      0.3317 |       1.802 | 140.6250 |         811.82 |
+| PaginateAndCountAsync | 100        | 10       |     3.366 |     0.0673 |      0.1106 |       3.365 | 281.2500 |        1618.95 |
+| CursorPaginateAsync   | 100        | 10       |     1.881 |     0.0598 |      0.1656 |       1.842 | 144.5313 |         819.97 |
+|                       |            |          |           |            |             |             |          |                |
+| PaginateAsync         | 1000       | 20       |     1.714 |     0.0330 |      0.0666 |       1.709 | 142.5781 |          815.3 |
+| PaginateAndCountAsync | 1000       | 20       |     3.431 |     0.0614 |      0.0956 |       3.435 | 285.1563 |        1622.38 |
+| CursorPaginateAsync   | 1000       | 20       |     1.788 |     0.0333 |      0.0278 |       1.783 | 148.4375 |         851.71 |
+
+#### Synchronous Methods
+
+| Method           | totalItems | pageSize | Mean (ms) | Error (ms) | StdDev (ms) | Median (ms) |     Gen0 | Allocated (KB) |
+| ---------------- | ---------- | -------- | --------: | ---------: | ----------: | ----------: | -------: | -------------: |
+| Paginate         | 100        | 10       |     1.722 |     0.0340 |      0.0834 |       1.710 | 144.5313 |          811.7 |
+| PaginateAndCount | 100        | 10       |     3.334 |     0.0624 |      0.1433 |       3.350 | 273.4375 |        1618.64 |
+| CursorPaginate   | 100        | 10       |     1.784 |     0.0418 |      0.1200 |       1.753 | 142.5781 |         819.79 |
+|                  |            |          |           |            |             |             |          |                |
+| Paginate         | 1000       | 20       |     1.689 |     0.0325 |      0.0434 |       1.678 | 146.4844 |         815.16 |
+| PaginateAndCount | 1000       | 20       |     3.435 |     0.0686 |      0.0642 |       3.420 | 281.2500 |        1622.15 |
+| CursorPaginate   | 1000       | 20       |     1.838 |     0.0354 |      0.0408 |       1.824 | 148.4375 |         851.51 |
 
 ### Benchmark Results Graph
 
 ![Benchmark Results](docs/images/benchmarkresult.png)
+
+These results provide valuable insights into the performance of different pagination methods in CorePagination and can help make informed decisions about which method to use based on the application's performance and resource usage requirements.
 
 ### Analysis
 
@@ -508,7 +527,18 @@ The benchmark results show that:
 - The `PaginateAsync` method has the highest memory consumption in terms of allocated memory compared to other methods.
 - The asynchronous pagination methods (`PaginateAsync`, `PaginateAsync`, `PaginateCursorAsync`) have slightly higher memory consumption than their synchronous counterparts.
 
-These results provide valuable insights into the performance of different pagination methods in CorePagination and can help make informed decisions about which method to use based on the application's performance and resource usage requirements.
+### Summary
+
+- **Asynchronous Methods**:
+
+  - **PaginateAsync**: Generally more efficient in time and memory compared to other asynchronous methods.
+  - **CursorPaginateAsync**: Similar performance to PaginateAsync with a slight increase in allocated memory.
+  - **PaginateAndCountAsync**: The slowest and most memory-consuming due to additional counting operations.
+
+- **Synchronous Methods**:
+  - **Paginate**: The fastest method and most memory-efficient.
+  - **CursorPaginate**: Slightly slower than Paginate but similar in memory usage.
+  - **PaginateAndCount**: Similar to its asynchronous counterpart, it's slower and consumes more memory.
 
 ## Upcoming Changes
 
