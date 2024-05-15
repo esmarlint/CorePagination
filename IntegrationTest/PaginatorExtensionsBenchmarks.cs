@@ -35,10 +35,10 @@ namespace CorePagination.Benchmarks
         [Benchmark]
         [Arguments(100, 10)]
         [Arguments(1000, 20)]
-        public async Task SimplePaginateAsync(int totalItems, int pageSize)
+        public async Task PaginateAndCountAsync(int totalItems, int pageSize)
         {
             var query = _context.Products.Take(totalItems);
-            var result = await query.SimplePaginateAsync(1, pageSize);
+            var result = await query.PaginateAndCountAsync(1, pageSize);
         }
 
         [Benchmark]
@@ -47,7 +47,7 @@ namespace CorePagination.Benchmarks
         public async Task CursorPaginateAsync(int totalItems, int pageSize)
         {
             var query = _context.Products.Take(totalItems).OrderBy(p => p.Id);
-            var result = await query.CursorPaginateAsync(p => p.Id, pageSize);
+            var result = await query.PaginateCursorAsync(p => p.Id, pageSize);
         }
 
         #endregion
@@ -66,10 +66,10 @@ namespace CorePagination.Benchmarks
         [Benchmark]
         [Arguments(100, 10)]
         [Arguments(1000, 20)]
-        public void SimplePaginate(int totalItems, int pageSize)
+        public void PaginateAndCount(int totalItems, int pageSize)
         {
             var query = _context.Products.Take(totalItems);
-            var result = query.SimplePaginate(1, pageSize);
+            var result = query.PaginateAndCount(1, pageSize);
         }
 
         [Benchmark]
@@ -78,7 +78,7 @@ namespace CorePagination.Benchmarks
         public void CursorPaginate(int totalItems, int pageSize)
         {
             var query = _context.Products.Take(totalItems).OrderBy(p => p.Id);
-            var result = query.CursorPaginate(p => p.Id, pageSize);
+            var result = query.PaginateCursor(p => p.Id, pageSize);
         }
 
         #endregion
